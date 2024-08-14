@@ -58,6 +58,7 @@ print(dir_path)
 def install_cert():
     p = subprocess.Popen("sudo apt-get update; sudo apt-get install ca-certificates -y; curl -s -o /tmp/Cloudflare_CA.pem https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.pem; cp /tmp/Cloudflare_CA.pem /usr/local/share/ca-certificates/Cloudflare_CA.crt; sudo update-ca-certificate; sudo apt install libnss3-tools; curl -s -o /tmp/cloudflare.crt https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.crt; ls /home/ | awk '{print $1}' | xargs -i mkdir -p /home/{}/.pki/nssdb; ls /home/ | awk '{print $1}' | xargs -i certutil -d sql:/home/{}/.pki/nssdb -A -t 'C,,' -n 'Cloudflare-CA' -i /tmp/cloudflare.crt",shell=True)
     p.communicate()
+
 def update():
     version = subprocess.getoutput("warp-cli --version")
     p = subprocess.Popen("curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg;echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; sudo apt update; sudo apt-get install cloudflare-warp -y; sudo apt-get install --only-upgrade cloudflare-warp -y",shell=True)
@@ -70,6 +71,13 @@ def update():
         root.destroy()
         start_dir = "python3 " + dir_path + "/main.py"
         os.system(start_dir)
+
+def get_acc_type():
+    account = subprocess.getoutput("warp-cli account")
+    if account.find("Team") > -1:
+        return True
+    else:
+        return False
 
 def acc_info():
     #Acc info
@@ -102,12 +110,6 @@ def get_status():
         status = "Connecting"
         subprocess.getoutput("warp-cli disconnect")
     return status
-def get_acc_type():
-    account = subprocess.getoutput("warp-cli account")
-    if account.find("Account type: Team") > -1:
-        return True
-    else:
-        return False
 
 def get_ip():
     try:
