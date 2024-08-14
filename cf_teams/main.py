@@ -222,6 +222,10 @@ on_button.pack(pady = 0)
 status_label = Label(root, text = "", fg = "Black", font = ("Arial", 15))
 status_label.pack(padx=0, pady=0)
 
+stats_label = Label(root, text = "", fg = "Black", font = ("Courier Condensed", 10))
+stats_label.pack(padx=10, pady=(20,10))
+old_warp_stats = warp_stats = ""
+
 class TestThreading(object):
 
     def __init__(self, interval=1):
@@ -231,12 +235,24 @@ class TestThreading(object):
         thread.start()
 
     def run(self,acc_label):
+        global warp_stats
+        """
         pre_latency = ""
         pre_loss = ""
+        """
         while True:
-            status = subprocess.getoutput("warp-cli status")
-            if(status.find("Status update: Connected")> -1):
-                warp_stats = subprocess.getoutput("warp-cli warp-stats")
+            status = get_status()
+            if status == True:
+                old_warp_stats = warp_stats
+                warp_stats = subprocess.getoutput("warp-cli tunnel stats")
+                if warp_stats != "":
+                    if warp_stats != old_warp_stats:
+                        wsl = warp_stats.splitlines()
+                        warp_stats = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
+                        #print("\n", warp_stats)
+                        stats_label.config(text = warp_stats)
+                        old_warp_stats = warp_stats
+                """
                 stats_list = warp_stats.split()
                 #up_time = stats_list[7]
                 latency = stats_list[14]
@@ -253,28 +269,17 @@ class TestThreading(object):
                     my_label_2.pack(padx=0, pady=0)
                 pre_latency = latency
                 pre_loss = loss
+                """
+                acc_info_update()
+                status_label.config(text = "Connected", fg = "Black",
+                    font = ("Arial", 15, 'bold') )
+            elif status == False:
+                status_label.config(text = "Disconnected", fg = "Gray",
+                    font = ("Arial", 15, '') )
+            elif status == "Connecting":
+                status_label.config(text = "Connecting...", fg = "Darkgray",
+                    font = ("Arial", 15, 'italic') )
 
-
-            if get_acc_type()==True:
-                acc_label.config(
-                    text = "Zero Trust",
-                    fg = "Blue",
-                    font = ("Arial", 40, 'bold'))
-                acc_label.pack(pady = 20)
-            else:
-                acc_label.config(
-                    text= "WARP",
-                    fg = "#FF5C33", 
-                    font = ("Arial", 40, 'bold'))
-                acc_label.pack(pady = 20)  
-
-            status2 = get_status()
-            if status2 == True:
-                my_label.config(text = "Connected", fg = "Black")
-            elif status2 == False:
-                my_label.config(text = "Disconnected", fg = "Black")
-            elif status2 == "Connecting":
-                my_label.config(text = "Connecting...", fg = "Black")
             time.sleep(self.interval)
 
 
