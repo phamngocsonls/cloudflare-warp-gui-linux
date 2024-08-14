@@ -226,6 +226,7 @@ def change_ip_text():
     time.sleep(0.5)
     info_label.config(text = get_ip())
 
+threading.Thread(target=change_ip_text).start()
 
 # Define our switch function
 def switch():
