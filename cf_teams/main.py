@@ -297,7 +297,7 @@ class TestThreading(object):
             time.sleep(self.interval)
 
 
-tr = TestThreading()
+root.tr = TestThreading()
 #logo
 # Define Our Images
 
