@@ -146,8 +146,8 @@ root = Tk()
 menubar = Menu(root)
 helpmenu = Menu(menubar,tearoff=0)
 #helpmenu.add_separator()
-menubar.add_cascade(label="Help(root)",menu=helpmenu)
-helpmenu.add_command(label="Update/Install", command=update)
+menubar.add_cascade(label="MENU",menu=helpmenu)
+helpmenu.add_command(label="Update or Install", command=update)
 helpmenu.add_command(label="Install Certificate", command=install_cert)
 
 #button
