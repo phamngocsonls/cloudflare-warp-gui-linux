@@ -90,7 +90,7 @@ def cf_info():
     version = subprocess.getoutput("warp-cli --version")
 
     return version
-    
+
 def get_status():
     status = subprocess.getoutput("warp-cli status")
     if status.find("Disconnected") > -1:
@@ -180,7 +180,7 @@ lbl.place(relx=0.0, rely=1.0, anchor='sw')
 acc_label = Label(root, text = "", font = ("Arial", 40, 'bold'))
 acc_label.pack(pady = (10,0))
 
-threading.Thread(target=acc_info_update).start()
+root.tr = threading.Thread(target=acc_info_update).start()
 
 #IP info
 info_label = Label(root, text = "-.-.-.-", fg = "black", font = ("Arial", 16))
@@ -192,14 +192,14 @@ def change_ip_text():
     time.sleep(0.5)
     info_label.config(text = get_ip())
 
-threading.Thread(target=change_ip_text).start()
+root.tr = threading.Thread(target=change_ip_text).start()
 
 # Define our switch function
-def switch():
+def switch():   
     #global is_on
     # Determin is on or switch
 
-    if get_status()==True:
+    if get_status() == True:
         status = subprocess.getoutput("warp-cli disconnect")
         #time.sleep(0.5)
         if status.split()[0] == "Success":
@@ -212,7 +212,7 @@ def switch():
     info_label.config(text = "-.-.-.-")
     threading.Thread(target=change_ip_text).start()
 
-
+        
 # Create A Button
 on_button = Button(root, image = off, bd = 0, command = switch,
     activebackground='LightGray')
