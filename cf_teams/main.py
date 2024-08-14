@@ -244,9 +244,7 @@ status_label.pack(padx=0, pady=0)
 class TestThreading(object):
 
     def __init__(self, interval=1):
-        subprocess.Popen("yes yes | warp-cli account", shell=True)
         self.interval = interval
-
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
         thread.start()
