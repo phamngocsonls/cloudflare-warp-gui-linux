@@ -74,10 +74,8 @@ def update():
 
 def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
-    if account.find("Team") > -1:
-        return True
-    else:
-        return False
+    return (account.find("Team") > -1)
+
 
 def acc_info():
     #Acc info
