@@ -91,15 +91,20 @@ def cf_info():
 
     return version
 
+status_err = ""
+
 def get_status():
+    global status_err
+    status_err = ""
     status = subprocess.getoutput("warp-cli status")
     if status.find("Disconnected") > -1:
-        status = False
+        return False
     elif status.find("Connected") > -1:
-        status = True
+        return True
     elif status.find("Connecting") > -1:
-        status = "Connecting"
-    return status
+        return "Connecting"
+    status_err = status.split("\n")[0]
+    return False
 
 def get_ip():
     try:
