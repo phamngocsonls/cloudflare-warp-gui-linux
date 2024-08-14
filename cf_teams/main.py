@@ -167,9 +167,7 @@ if version.find("not found") > -1:
     warp_version = "WARP not found"
 else:
     warp_version = version
-lbl = Label(root, text = warp_version)
-lbl.grid()
-lbl.place(relx=1.0, rely=1.0, anchor='se')
+warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
 
 
 lbl = Label(root, text = "v0.1e")
