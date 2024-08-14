@@ -124,7 +124,7 @@ def get_ip():
 def enroll():
     if get_acc_type() == True:
         subprocess.Popen("yes yes | warp-cli register", shell=True)
-        slogan.config(image = logo)  
+        slogan.config(image = logo)
         subprocess.getoutput("warp-cli disconnect")
 
     else:
@@ -133,8 +133,7 @@ def enroll():
         new_command = "yes yes | warp-cli teams-enroll " + organization
         subprocess.Popen(new_command, shell=True)
         slogan.config(image = cflogo)
-        subprocess.getoutput("warp-cli disconnect")
-
+    subprocess.getoutput("warp-cli disconnect")
     on_button.config(image = off)
     
 # create root windows
@@ -189,19 +188,6 @@ lbl.place(relx=0.0, rely=1.0, anchor='sw')
 ##global is_on
 #is_on = False
 
-
-#status label
-try:
-    ip = ""
-    ip = get('https://ip.seeip.org/',timeout= 2).text
-    details = handler.getDetails(ip).country
-    output = ip + " (" + details + ")"
-except:
-    output = ip
-    pass
-
-
-
 #Acc info
 if get_acc_type()==True:
     acc_label = Label(root, 
@@ -248,7 +234,7 @@ def switch():
 
 
 # Create A Button
-if get_status()==True:
+if get_status() == True:
     on_button = Button(root, image = on, bd = 0,
                     command = switch)
     on_button.pack(pady = 10)
@@ -258,23 +244,11 @@ else:
     on_button.pack(pady = 10)
 
 # Create Label
-if get_status()==True:
-    my_label = Label(root, 
-        text = "Connected", 
-        fg = "Black", 
-        font = ("Arial", 15,'bold'))
-
-
-
-else:
-    my_label = Label(root, 
-        text = "Disconnected", 
-        fg = "Black", 
-        font = ("Arial", 15,'bold'))
-
-my_label.pack(padx=0, pady=0)
+status_label = Label(root, text = "", fg = "Black", font = ("Arial", 15))
+status_label.pack(padx=0, pady=0)
 
 class TestThreading(object):
+
     def __init__(self, interval=1):
         subprocess.Popen("yes yes | warp-cli account", shell=True)
         self.interval = interval
