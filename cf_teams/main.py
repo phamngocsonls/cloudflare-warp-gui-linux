@@ -201,16 +201,16 @@ def switch():
 
     if get_status() == True:
         status = subprocess.getoutput("warp-cli disconnect")
-        #time.sleep(0.5)
-        if status.split()[0] == "Success":
-            on_button.config(image = off)
     else:
         status = subprocess.getoutput("warp-cli connect")
-        if status.split()[0] == "Success":
-            on_button.config(image = on)
             
     info_label.config(text = "-.-.-.-")
-    threading.Thread(target=change_ip_text).start()
+    root.tr = threading.Thread(target=change_ip_text).start()
+
+    if get_status() == True:
+        on_button.config(image = on)
+    else:
+        on_button.config(image = off)
 
         
 # Create A Button
