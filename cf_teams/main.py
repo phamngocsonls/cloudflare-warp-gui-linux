@@ -113,19 +113,21 @@ def get_ip():
         return ipdis
 
 def enroll():
-    if get_acc_type() == True:
-        subprocess.Popen("yes yes | warp-cli register", shell=True)
-        slogan.config(image = logo)
     subprocess.getoutput("warp-cli disconnect")
-
+    try:
+        if acc_type == True:
+            subprocess.Popen("yes yes | warp-cli registration new", shell=True)
+            slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
                                       prompt="What's your Organization?:")
+            if organization != "":
                 new_command = "yes yes | warp-cli teams-enroll " + organization
                 subprocess.Popen(new_command, shell=True)
-        slogan.config(image = cflogo)
-    subprocess.getoutput("warp-cli disconnect")
-    on_button.config(image = off)
+                slogan.config(image = logo)
+    except:
+        pass
+    switch()
     
 # create root windows
 root = Tk()
@@ -284,15 +286,11 @@ root.tr = TestThreading()
 
 frame = Frame(root)
 frame.pack(side=BOTTOM)
-if (get_acc_type() == True):
-    slogan = Button(frame, image = cflogo,
-                    command=enroll)
-    
-elif (get_acc_type() == False):
-    slogan = Button(frame, image = logo,
-                    command=enroll)
-slogan.pack(side=BOTTOM)
-
+if acc_type == True:
+    slogan = Button(frame, image = cflogo, command=enroll)
+else:
+    slogan = Button(frame, image = logo, command=enroll)
+slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 #update_button = Button(root, text="Update",
 #                    command=update)
