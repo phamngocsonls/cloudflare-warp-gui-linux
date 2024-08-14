@@ -186,8 +186,8 @@ lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
 
 # Keep track of the button state on/off
-#global is_on
-is_on = False
+##global is_on
+#is_on = False
 
 
 #status label
@@ -230,21 +230,18 @@ threading.Thread(target=change_ip_text).start()
 
 # Define our switch function
 def switch():
-    global is_on
+    #global is_on
     # Determin is on or switch
 
     if get_status()==True:
         status = subprocess.getoutput("warp-cli disconnect")
-        time.sleep(0.5)
-        if status == "Success":
+        #time.sleep(0.5)
+        if status.split()[0] == "Success":
             on_button.config(image = off)
     else:
         status = subprocess.getoutput("warp-cli connect")
-        time.sleep(1)
-        if get_status()==True:
+        if status.split()[0] == "Success":
             on_button.config(image = on)
-        else:
-            on_button.config(image = off)
             
     info_label.config(text = "-.-.-.-")
     threading.Thread(target=change_ip_text).start()
