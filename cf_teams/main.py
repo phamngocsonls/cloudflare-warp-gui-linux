@@ -108,7 +108,6 @@ def get_status():
         status = True
     elif status.find("Status update: Connecting") > -1:
         status = "Connecting"
-        subprocess.getoutput("warp-cli disconnect")
     return status
 
 def get_ip():
