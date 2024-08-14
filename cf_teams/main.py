@@ -102,11 +102,11 @@ def cf_info():
     
 def get_status():
     status = subprocess.getoutput("warp-cli status")
-    if status.find("Status update: Disconnected") > -1:
+    if status.find("Disconnected") > -1:
         status = False
-    elif status.find("Status update: Connected") > -1:
+    elif status.find("Connected") > -1:
         status = True
-    elif status.find("Status update: Connecting") > -1:
+    elif status.find("Connecting") > -1:
         status = "Connecting"
     return status
 
