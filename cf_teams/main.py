@@ -216,21 +216,16 @@ else:
         font = ("Arial", 40, 'bold'))
     acc_label.pack(pady = 20)
 
+#IP info
+info_label = Label(root, text = "-.-.-.-", fg = "black", font = ("Arial", 16))
+info_label.pack(pady = (30,10))
 
 def change_ip_text():
-    try:
-        #time.sleep(2)
-        info_label.config(text = get_ip(), 
-                        fg = "Black")
-    except:
-        pass
+    while get_status()=="Connecting":
+        time.sleep(0.5)
+    time.sleep(0.5)
+    info_label.config(text = get_ip())
 
-#IP info`
-info_label = Label(root, 
-    text = output,
-    fg = "black", 
-    font = ("Arial", 20))
-info_label.pack(pady = 20)
 
 # Define our switch function
 def switch():
@@ -250,8 +245,7 @@ def switch():
         else:
             on_button.config(image = off)
             
-    info_label.config(text = "", 
-                fg = "Black")
+    info_label.config(text = "-.-.-.-")
     threading.Thread(target=change_ip_text).start()
 
 
