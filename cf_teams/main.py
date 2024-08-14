@@ -96,8 +96,6 @@ def acc_info():
 
 def cf_info():
     version = subprocess.getoutput("warp-cli --version")
-    account = subprocess.getoutput("warp-cli account")
-    status = subprocess.getoutput("warp-cli status")
     return version
     
 def get_status():
