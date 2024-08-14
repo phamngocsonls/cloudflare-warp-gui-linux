@@ -116,13 +116,13 @@ def enroll():
     if get_acc_type() == True:
         subprocess.Popen("yes yes | warp-cli register", shell=True)
         slogan.config(image = logo)
-        subprocess.getoutput("warp-cli disconnect")
+    subprocess.getoutput("warp-cli disconnect")
 
-    else:
-        organization = simpledialog.askstring(title="Organization",
-                                  prompt="What's your Organization?:")
-        new_command = "yes yes | warp-cli teams-enroll " + organization
-        subprocess.Popen(new_command, shell=True)
+        else:
+            organization = simpledialog.askstring(title="Organization",
+                                      prompt="What's your Organization?:")
+                new_command = "yes yes | warp-cli teams-enroll " + organization
+                subprocess.Popen(new_command, shell=True)
         slogan.config(image = cflogo)
     subprocess.getoutput("warp-cli disconnect")
     on_button.config(image = off)
@@ -174,24 +174,11 @@ lbl = Label(root, text = "v0.1e")
 lbl.grid()
 lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
-
-# Keep track of the button state on/off
-##global is_on
-#is_on = False
-
 #Acc info
-if get_acc_type()==True:
-    acc_label = Label(root, 
-        text = "Zero Trust",
-        fg = "Blue",
-        font = ("Arial", 40, 'bold'))
-    acc_label.pack(pady = 20)
-else:
-    acc_label = Label(root, 
-        text= "WARP",
-        fg = "#FF5C33", 
-        font = ("Arial", 40, 'bold'))
-    acc_label.pack(pady = 20)
+acc_label = Label(root, text = "", font = ("Arial", 40, 'bold'))
+acc_label.pack(pady = (10,0))
+
+threading.Thread(target=acc_info_update).start()
 
 #IP info
 info_label = Label(root, text = "-.-.-.-", fg = "black", font = ("Arial", 16))
