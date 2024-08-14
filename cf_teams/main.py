@@ -76,21 +76,15 @@ def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
 
+acc_type = ""
 
-def acc_info():
-    #Acc info
-    if get_acc_type()==True:
-        acc_label = Label(root, 
-            text = "Zero Trust",
-            fg = "Blue",
-            font = ("Arial", 40, 'bold'))
-        acc_label.pack(pady = 20)
+def acc_info_update():
+    global acc_type
+    acc_type = get_acc_type()
+    if acc_type == True:
+        acc_label.config(text = "Zero Trust", fg = "Blue")
     else:
-        acc_label = Label(root, 
-            text= "WARP",
-            fg = "#FF5C33", 
-            font = ("Arial", 40, 'bold'))
-        acc_label.pack(pady = 20)
+        acc_label.config(text = "WARP", fg = "DarkOrange")
 
 def cf_info():
     version = subprocess.getoutput("warp-cli --version")
