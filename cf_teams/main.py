@@ -112,14 +112,11 @@ def get_status():
 
 def get_ip():
     try:
-        ipdis = ""
-        ipdis = get('https://ifconfig.me/',timeout= 2.5).text
-        details = handler.getDetails(ipdis).country
-        return ipdis + " (" + details + ")"
+        ipdis = get('https://ifconfig.me/ip', timeout=1).text
     except:
+        return ""
     try:
-            ipdis = get('https://ifconfig.me/',timeout= 2.5).text
-            details = handler.getDetails(ipdis).country
+        details = handler.getDetails(ipdis, timeout=1).country
         return ipdis + " (" + details + ")"
     except:
         return ipdis
