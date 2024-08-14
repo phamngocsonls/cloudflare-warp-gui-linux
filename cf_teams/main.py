@@ -94,6 +94,7 @@ def acc_info():
 
 def cf_info():
     version = subprocess.getoutput("warp-cli --version")
+
     return version
     
 def get_status():
@@ -230,14 +231,11 @@ def switch():
 
 
 # Create A Button
+on_button = Button(root, image = off, bd = 0, command = switch,
+    activebackground='LightGray')
 if get_status() == True:
-    on_button = Button(root, image = on, bd = 0,
-                    command = switch)
-    on_button.pack(pady = 10)
-else:
-    on_button = Button(root, image = off, bd = 0,
-                    command = switch)
-    on_button.pack(pady = 10)
+    on_button.config(image = on)
+on_button.pack(pady = 0)
 
 # Create Label
 status_label = Label(root, text = "", fg = "Black", font = ("Arial", 15))
@@ -276,7 +274,7 @@ class TestThreading(object):
                     my_label_2.pack(padx=0, pady=0)
                 pre_latency = latency
                 pre_loss = loss
- 
+
 
             if get_acc_type()==True:
                 acc_label.config(
