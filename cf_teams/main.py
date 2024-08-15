@@ -87,9 +87,7 @@ def acc_info_update():
         acc_label.config(text = "WARP", fg = "DarkOrange")
 
 def cf_info():
-    version = subprocess.getoutput("warp-cli --version")
-
-    return version
+    return subprocess.getoutput("warp-cli --version")
 
 status_err = ""
 
