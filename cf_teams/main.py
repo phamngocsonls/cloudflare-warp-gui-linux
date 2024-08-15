@@ -80,11 +80,19 @@ acc_type = get_acc_type();
 
 def acc_info_update():
     global acc_type
+
     acc_type = get_acc_type()
     if acc_type == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
     else:
         acc_label.config(text = "WARP", fg = "Tomato")
+
+    if registration_missing() == True:
+        slogan.config(image = cflogo)
+    elif acc_type == True:
+        slogan.config(image = cflogo)
+    else:
+        slogan.config(image = tmlogo)
 
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
