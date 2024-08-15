@@ -135,7 +135,8 @@ def enroll():
 # create root windows
 root = Tk()
 
-menubar = Menu(root)
+bgcolor = "LightGray"
+menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 #helpmenu.add_separator()
 menubar.add_cascade(label="MENU",menu=helpmenu)
@@ -164,7 +165,7 @@ root.title("WARP GUI")
 root.geometry('360x480')
 
 root.iconphoto(False,appicon)
-
+root.config(bg = bgcolor)
 
 version = cf_info()
 if version.find("not found") > -1:
@@ -173,22 +174,25 @@ else:
     warp_version = version
 warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
 
-lbl = Label(root, text = "GUI v0.2", fg = "black", font = ("Arial", 12), pady=10, padx=10)
+lbl = Label(root, text = "GUI v0.2", fg = "black", bg = bgcolor,
+    font = ("Arial", 12), pady=10, padx=10)
 lbl.grid()
 lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
 #Acc info
-acc_label = Label(root, text = "", font = ("Arial", 40, 'bold'))
+acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
 acc_label.pack(pady = (10,0))
 
 root.tr = threading.Thread(target=acc_info_update).start()
 
 #IP info
-info_label = Label(root, text = "-.-.-.-", fg = "black", font = ("Arial", 16))
+info_label = Label(root, fg = "black", bg = bgcolor, font = ("Arial", 16),
+    text = "-.-.-.-")
 info_label.pack(pady = (30,10))
 
 # Create A Button
-on_button = Button(root, image = off, bd = 0, activebackground='LightGray')
+on_button = Button(root, image = off, bd = 0,
+    activebackground = bgcolor, bg = bgcolor)
 if get_status() == True:
     on_button.config(image = on)
 
@@ -224,10 +228,10 @@ on_button.pack(pady = 0)
 
 
 # Create Label
-status_label = Label(root, text = "", fg = "Black", font = ("Arial", 15))
+status_label = Label(root, text = "", fg = "Black", bg = bgcolor, font = ("Arial", 15))
 status_label.pack(padx=0, pady=0)
 
-stats_label = Label(root, text = "", fg = "Black", font = ("Courier Condensed", 10))
+stats_label = Label(root, text = "", bg = bgcolor, font = ("Courier Condensed", 10))
 stats_label.pack(padx=10, pady=(20,10))
 old_warp_stats = warp_stats = ""
 
@@ -294,7 +298,7 @@ root.tr = TestThreading()
 #logo
 # Define Our Images
 
-frame = Frame(root)
+frame = Frame(root, bg = bgcolor)
 frame.pack(side=BOTTOM)
 
 slogan = Button(frame, image = "", command=enroll)
