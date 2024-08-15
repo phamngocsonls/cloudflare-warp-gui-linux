@@ -347,6 +347,29 @@ old_warp_stats = warp_stats = ""
 
 ################################################################################
 
+def slide_update(status):
+    change = 1
+
+    if status == "UP":
+        status_label.config(text = "Connected", fg = "Blue",
+            font = ("Arial", 15, 'bold') )
+        on_button.config(image = on)
+    elif status == "DN":
+        status_label.config(text = "Disconnected", fg = "DimGray",
+            font = ("Arial", 15, '') )
+        on_button.config(image = off)
+        stats_label.config(fg = "DimGray")
+    elif status == "CN":
+        status_label.config(text = "Connecting...", fg = "DimGray",
+            font = ("Arial", 15, 'italic') )
+    else:
+        change = 0
+
+    if change:
+        on_button.update()
+        status_label.update()
+
+
 class TestThreading(object):
 
     def __init__(self, interval=1):
@@ -361,31 +384,19 @@ class TestThreading(object):
         while True:
             status = get_status()
             if status == "UP":
+                root.tr = threading.Thread(target=acc_info_update).start()
                 old_warp_stats = warp_stats
                 warp_stats = subprocess.getoutput("warp-cli tunnel stats")
-                if warp_stats != "":
-                    if warp_stats != old_warp_stats:
-                        wsl = warp_stats.splitlines()
-                        warp_stats = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
-                        stats_label.config(text = warp_stats, fg = "MidNightBlue")
-                        old_warp_stats = warp_stats
-                        stats_label.update()
-                acc_info_update()
-                status_label.config(text = "Connected", fg = "Blue",
-                    font = ("Arial", 15, 'bold') )
-                on_button.config(image = on)
-            elif status == "DN":
-                status_label.config(text = "Disconnected", fg = "DimGray",
-                    font = ("Arial", 15, '') )
-                on_button.config(image = off)
-                stats_label.config(fg = "DimGray")
-            elif status == "CN":
-                status_label.config(text = "Connecting...", fg = "DimGray",
-                    font = ("Arial", 15, 'italic') )
-            status_label.update()
-            stats_label.update()
-            on_button.update()
-
+                if warp_stats == "":
+                    warp_stats = old_warp_stats
+                elif warp_stats != old_warp_stats:
+                    old_warp_stats = warp_stats
+                    wsl = warp_stats.splitlines()
+                    wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
+                    stats_label.config(text = wsl, fg = "MidNightBlue")
+                    stats_label.update()
+            if status == "UP" or status == "DN":
+                slide_update(status)
             time.sleep(self.interval)
 
 
