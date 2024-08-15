@@ -67,7 +67,7 @@ def update():
     new_version = subprocess.getoutput("warp-cli --version")
 
     if new_version != version:
-        subprocess.Popen("yes yes | warp-cli register", shell=True)
+        subprocess.getoutput("yes yes | warp-cli register")
         root.destroy()
         start_dir = "python3 " + dir_path + "/main.py"
         os.system(start_dir)
@@ -119,14 +119,14 @@ def enroll():
     subprocess.getoutput("warp-cli disconnect")
     try:
         if acc_type == True:
-            subprocess.Popen("yes yes | warp-cli registration new", shell=True)
+            subprocess.getoutput("yes yes | warp-cli registration new")
             slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
                                       prompt="What's your Organization?:")
             if organization != "":
                 new_command = "yes yes | warp-cli teams-enroll " + organization
-                subprocess.Popen(new_command, shell=True)
+                subprocess.getoutput(new_command)
                 slogan.config(image = tmlogo)
     except:
         pass
