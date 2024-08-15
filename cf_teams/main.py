@@ -108,7 +108,7 @@ def get_status():
 
 def get_ip():
     try:
-        ipdis = get('https://ifconfig.me/ip', timeout=1).text
+        ipdis = get('https://ifconfig.me/ip', timeout=2).text
     except:
         return ""
     try:
@@ -191,14 +191,14 @@ info_label.pack(pady = (30,10))
 
 def change_ip_text():
     while get_status()=="Connecting":
+            time.sleep(0.5)
         time.sleep(0.5)
-    time.sleep(0.5)
-    info_label.config(text = get_ip())
+        info_label.config(text = get_ip())
 
 root.tr = threading.Thread(target=change_ip_text).start()
 
 # Define our switch function
-def switch():   
+def switch():
     #global is_on
     # Determin is on or switch
 
@@ -209,19 +209,20 @@ def switch():
             
     info_label.config(text = "-.-.-.-")
     root.tr = threading.Thread(target=change_ip_text).start()
-
+    
     if get_status() == True:
         on_button.config(image = on)
     else:
         on_button.config(image = off)
 
-        
+
 # Create A Button
 on_button = Button(root, image = off, bd = 0, command = switch,
     activebackground='LightGray')
 if get_status() == True:
     on_button.config(image = on)
 on_button.pack(pady = 0)
+
 
 # Create Label
 status_label = Label(root, text = "", fg = "Black", font = ("Arial", 15))
