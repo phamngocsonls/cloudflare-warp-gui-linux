@@ -213,7 +213,8 @@ def switch():
         status = subprocess.getoutput("warp-cli disconnect")
     else:
         status = subprocess.getoutput("warp-cli connect")
-            
+
+    stats_label.config(fg = "DimGray")
     info_label.config(text = "-=-.-=-.-=-.-=-")
     root.tr = threading.Thread(target=change_ip_text).start()
     
