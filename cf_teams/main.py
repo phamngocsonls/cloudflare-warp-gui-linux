@@ -89,20 +89,39 @@ def acc_info_update():
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
 
+regstr_missng = False
+
+def registration_missing():
+    global regstr_missng
+    return regstr_missng
+
 status_err = ""
 
 def get_status():
     global status_err
-    status_err = ""
+    global regstr_missng
+
     status = subprocess.getoutput("warp-cli status")
+    status = status.split("\n")[0]
+    if status.find("Success") > -1:
+        time.sleep(0.5)
+        return get_status()
+    status_err = status
+
     if status.find("Disconnected") > -1:
-        return False
+        regstr_missng = False
+        return "DN"
     elif status.find("Connected") > -1:
-        return True
+        regstr_missng = False
+        return "UP"
     elif status.find("Connecting") > -1:
-        return "Connecting"
-    status_err = status.split("\n")[0]
-    return False
+        regstr_missng = False
+        return "CN"
+
+    if status.find("Registration Missing") > -1:
+        regstr_missng = True
+        return "RGM"
+    return "ERR"
 
 def get_ip():
     try:
@@ -118,7 +137,7 @@ def get_ip():
 def enroll():
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if acc_type == True:
+        if acc_type == True or registration_missing() == True:
             subprocess.getoutput("yes yes | warp-cli registration new")
             slogan.config(image = cflogo)
         else:
@@ -193,25 +212,24 @@ info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
 info_label.pack(pady = (30,10))
 
 # Create A Button
-on_button = Button(root, image = off, bd = 0,
+status_old = get_status()
+on_button = Button(root, image = off, bd = 0, 
     activebackground = bgcolor, bg = bgcolor)
-if get_status() == True:
+if status_old == "UP":
     on_button.config(image = on)
 
 def change_ip_text():
-    while get_status()=="Connecting":
+    while get_status() == "CN":
         time.sleep(0.5)
     time.sleep(0.5)
     info_label.config(text = get_ip())
-
-root.tr = threading.Thread(target=change_ip_text).start()
 
 # Define our switch function
 def switch():
     #global is_on
     # Determin is on or switch
 
-    if get_status() == True:
+    if get_status() == "UP":
         status = subprocess.getoutput("warp-cli disconnect")
     else:
         status = subprocess.getoutput("warp-cli connect")
@@ -220,7 +238,7 @@ def switch():
     info_label.config(text = "-=-.-=-.-=-.-=-")
     root.tr = threading.Thread(target=change_ip_text).start()
     
-    if get_status() == True:
+    if get_status() == "UP":
         on_button.config(image = on)
     else:
         on_button.config(image = off)
@@ -228,6 +246,8 @@ def switch():
 
 on_button.config(command = switch)
 on_button.pack(pady = 0)
+
+root.tr = threading.Thread(target=change_ip_text).start()
 
 
 # Create Label
@@ -254,7 +274,7 @@ class TestThreading(object):
         """
         while True:
             status = get_status()
-            if status == True:
+            if status == "UP":
                 old_warp_stats = warp_stats
                 warp_stats = subprocess.getoutput("warp-cli tunnel stats")
                 if warp_stats != "":
@@ -286,11 +306,12 @@ class TestThreading(object):
                 status_label.config(text = "Connected", fg = "Blue",
                     font = ("Arial", 15, 'bold') )
                 on_button.config(image = on)
-            elif status == False:
+            elif status == "DN":
                 status_label.config(text = "Disconnected", fg = "DimGray",
                     font = ("Arial", 15, '') )
                 on_button.config(image = off)
-            elif status == "Connecting":
+                stats_label.config(fg = "DimGray")
+            elif status == "CN":
                 status_label.config(text = "Connecting...", fg = "DimGray",
                     font = ("Arial", 15, 'italic') )
 
@@ -305,7 +326,9 @@ frame = Frame(root, bg = bgcolor)
 frame.pack(side=BOTTOM)
 
 slogan = Button(frame, image = "", command=enroll)
-if acc_type == True:
+if registration_missing() == True:
+    slogan.config(image = cflogo)
+elif acc_type == True:
     slogan.config(image = cflogo)
 else:
     slogan.config(image = tmlogo)
