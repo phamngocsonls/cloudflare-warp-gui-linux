@@ -255,7 +255,7 @@ def wait_status():
 
 def change_ip_text():
     info_label.config(text = get_ip())
-
+    on_button.config(state = NORMAL)
     info_label.update()
 
 def update_guiview():
@@ -296,6 +296,8 @@ def switch():
     global status_old
     global status_err
 
+    on_button.config(state = DISABLED)
+
     if status_old == "UP":
         status_old = "DC"
         status_label.config(text = "Disconnecting...", fg = "Dimgray",
@@ -309,12 +311,12 @@ def switch():
     #else:
     #    print("WARNING(status_old invalid): ", status_old)
     status_label.update()
-
+    
     update_guiview()
 
 ################################################################################
 
-on_button.config(command = switch)
+on_button.config(command = switch, state = DISABLED)
 on_button.pack(pady = 0)
 
 root.tr = threading.Thread(target=change_ip_text).start()
