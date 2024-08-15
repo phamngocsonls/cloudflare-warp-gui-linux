@@ -106,7 +106,7 @@ def get_status():
 
 def get_ip():
     try:
-        ipdis = get('https://ifconfig.me/ip', timeout=2).text
+        ipdis = get('https://ifconfig.me/ip', timeout=(0.5,0.5)).text
     except:
         return ""
     try:
