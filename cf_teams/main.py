@@ -259,6 +259,8 @@ on_button = Button(root, image = off, bd = 0,
     activebackground = bgcolor, bg = bgcolor)
 if get_status() == "UP":
     on_button.config(image = on)
+else:
+    info_label.config(fg = "DimGray")
 
 ################################################################################
 
@@ -275,7 +277,13 @@ def wait_status():
 
 
 def change_ip_text():
+    global status_old
+
     info_label.config(text = get_ip())
+    if status_old == "UP":
+        info_label.config(fg = "MidNightBlue")
+    else:
+        info_label.config(fg = "DimGray")
     on_button.config(state = NORMAL)
     info_label.update()
 
