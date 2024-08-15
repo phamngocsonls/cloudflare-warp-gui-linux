@@ -191,9 +191,9 @@ info_label.pack(pady = (30,10))
 
 def change_ip_text():
     while get_status()=="Connecting":
-            time.sleep(0.5)
         time.sleep(0.5)
-        info_label.config(text = get_ip())
+    time.sleep(0.5)
+    info_label.config(text = get_ip())
 
 root.tr = threading.Thread(target=change_ip_text).start()
 
@@ -279,9 +279,11 @@ class TestThreading(object):
                 acc_info_update()
                 status_label.config(text = "Connected", fg = "Black",
                     font = ("Arial", 15, 'bold') )
+                on_button.config(image = on)
             elif status == False:
                 status_label.config(text = "Disconnected", fg = "Gray",
                     font = ("Arial", 15, '') )
+                on_button.config(image = off)
             elif status == "Connecting":
                 status_label.config(text = "Connecting...", fg = "Darkgray",
                     font = ("Arial", 15, 'italic') )
