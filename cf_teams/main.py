@@ -117,12 +117,12 @@ def registration_missing():
     return regstr_missng
 
 
+ipaddr = ""
 status_err = ""
-
+status_old = ""
 
 def get_status():
-    global status_err
-    global regstr_missng
+    global status_err, regstr_missng, status_old, ipaddr
 
     status = subprocess.getoutput("warp-cli status")
     status = status.split("\n")[0]
@@ -133,18 +133,25 @@ def get_status():
 
     if status.find("Disconnected") > -1:
         regstr_missng = False
-        return "DN"
+        status = "DN"
     elif status.find("Connected") > -1:
         regstr_missng = False
-        return "UP"
+        status = "UP"
     elif status.find("Connecting") > -1:
         regstr_missng = False
-        return "CN"
-
-    if status.find("Registration Missing") > -1:
+        status = "CN"
+    elif status.find("Registration Missing") > -1:
         regstr_missng = True
-        return "RGM"
-    return "ERR"
+        status = "RGM"
+    else:
+        status = "ERR"
+
+    if status != status_old:
+        ipaddr = ""
+        status_old = status
+
+    return status
+
 
 
 def get_ip():
