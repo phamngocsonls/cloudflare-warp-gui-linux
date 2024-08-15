@@ -255,10 +255,9 @@ info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
 info_label.pack(pady = (30,10))
 
 # Create A Button
-status_old = get_status()
 on_button = Button(root, image = off, bd = 0, 
     activebackground = bgcolor, bg = bgcolor)
-if status_old == "UP":
+if get_status() == "UP":
     on_button.config(image = on)
 
 ################################################################################
@@ -280,31 +279,33 @@ def change_ip_text():
     on_button.config(state = NORMAL)
     info_label.update()
 
-def update_guiview():
-    global status_old
+
+def update_guiview(errlog=1):
     global status_err
 
-    status_old = wait_status()
+    status = wait_status()
 
-    if status_err != "":
+    stats_err = 0
+    if errlog and status_err != "":
         err_str = status_err.split("\n")
         err_str = err_str[0].split(".")
         err_str = "\n".join(err_str)
         stats_label.config(text = err_str, fg = "OrangeRed")
-    elif status == "UP":
+        stats_err = 1
+
+    if status == "UP":
         on_button.config(image = on)
-    elif status == "DN":
+    elif status != "CN":
         on_button.config(image = off)
-        stats_label.config(fg = "DimGray")
-    else:
-        return status
+        if errlog and stats_err == 0:
+            stats_label.config(fg = "DimGray")
 
     on_button.update()
     stats_label.update()
 
-    if status_old == "UP" or status_old == "DN":
+    if status != "CN" and status != "DC":
         #root.tr = threading.Thread(target=change_ip_text).start()
-        acc_info_update()
+        root.tr = threading.Thread(target=acc_info_update).start()
         change_ip_text()
 
 
