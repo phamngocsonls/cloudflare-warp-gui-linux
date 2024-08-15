@@ -80,17 +80,21 @@ def get_acc_type():
     return (account.find("Team") > -1)
 
 
-acc_type = get_acc_type();
-
+acc_type = "";
 
 def acc_info_update():
     global acc_type
+    acc_old = acc_type
 
     acc_type = get_acc_type()
+    if acc_old == acc_type:
+        return
+
     if acc_type == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
     else:
         acc_label.config(text = "WARP", fg = "Tomato")
+    acc_label.update()
 
     if registration_missing() == True:
         slogan.config(image = cflogo)
@@ -98,6 +102,7 @@ def acc_info_update():
         slogan.config(image = cflogo)
     else:
         slogan.config(image = tmlogo)
+    slogan.update()
 
 
 def cf_info():
@@ -214,9 +219,8 @@ lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
-acc_label.pack(pady = 0)
-
 root.tr = threading.Thread(target=acc_info_update).start()
+acc_label.pack(pady = 0)
 
 version = cf_info()
 if version.find("not found") > -1:
