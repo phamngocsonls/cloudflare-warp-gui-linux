@@ -167,13 +167,6 @@ root.geometry('360x480')
 root.iconphoto(False,appicon)
 root.config(bg = bgcolor)
 
-version = cf_info()
-if version.find("not found") > -1:
-    warp_version = "WARP not found"
-else:
-    warp_version = version
-warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
-
 lbl = Label(root, text = "GUI v0.2", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 12), pady=10, padx=10)
 lbl.grid()
@@ -184,6 +177,15 @@ acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
 acc_label.pack(pady = 0)
 
 root.tr = threading.Thread(target=acc_info_update).start()
+
+version = cf_info()
+if version.find("not found") > -1:
+    warp_version = "WARP not found"
+else:
+    warp_version = version
+warpver_label = Label(root, text = warp_version, fg = "DimGray",
+    bg = bgcolor, font = ("Arial", 12))
+warpver_label.pack(pady = (0,10))
 
 #IP info
 info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
