@@ -47,6 +47,7 @@ import threading
 import ipinfo
 import os
 from tkinter import simpledialog
+from random import choice
 
 #enter access_token from ipinfo
 access_token = ""
@@ -153,15 +154,24 @@ def get_status():
     return status
 
 
+website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
 def get_ip():
+    global website, ipaddr
+
+    if ipaddr != "":
+        return ipaddr
+
     try:
-        ipdis = get('https://ifconfig.me/ip', timeout=(0.5,0.5)).text
-    except:
-        return ""
+        ipdis = get('https://' + choice(website), timeout=(0.5,1.0)).text
+    except Exception as e:
+        print("get ipaddr: ", str(e))
+        return "-= error or timeout =-"
+
     try:
-        details = handler.getDetails(ipdis, timeout=1).country
-        return ipdis + " (" + details + ")"
+        details = handler.getDetails(ipdis, timeout=(0.5,1.0)).country
+        ipaddr = ipdis + " (" + details + ")"
+        return ipaddr
     except:
         return ipdis
 
@@ -170,7 +180,8 @@ def enroll():
     subprocess.getoutput("warp-cli disconnect")
     try:
         if acc_type == True or registration_missing() == True:
-            subprocess.getoutput("yes yes | warp-cli registration new")
+            cmdline = "warp-cli registration new"
+            subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
@@ -181,7 +192,7 @@ def enroll():
                 slogan.config(image = tmlogo)
     except:
         pass
-    switch()
+    update_guiview()
 
 
 # create root windows ##########################################################
