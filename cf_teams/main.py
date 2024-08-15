@@ -161,7 +161,7 @@ cflogo = PhotoImage(file = cflogo_dir)
 cflogo = cflogo.subsample(2)
 
 # root window title and dimension
-root.title("WARP GUI for linux")
+root.title("WARP GUI")
 # Set geometry (widthxheight)
 root.geometry('360x480')
 
@@ -174,7 +174,6 @@ if version.find("not found") > -1:
 else:
     warp_version = version
 warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
-
 
 lbl = Label(root, text = "v0.1e")
 lbl.grid()
