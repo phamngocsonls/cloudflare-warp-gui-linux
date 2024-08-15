@@ -295,10 +295,12 @@ root.tr = TestThreading()
 
 frame = Frame(root)
 frame.pack(side=BOTTOM)
+
+slogan = Button(frame, image = "", command=enroll)
 if acc_type == True:
-    slogan = Button(frame, image = cflogo, command=enroll)
+    slogan.config(image = cflogo)
 else:
-    slogan = Button(frame, image = logo, command=enroll)
+    slogan.config(image = logo)
 slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 #update_button = Button(root, text="Update",
