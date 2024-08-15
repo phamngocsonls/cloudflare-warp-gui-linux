@@ -76,7 +76,7 @@ def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
 
-acc_type = ""
+acc_type = get_acc_type();
 
 def acc_info_update():
     global acc_type
