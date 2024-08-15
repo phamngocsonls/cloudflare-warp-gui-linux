@@ -187,6 +187,11 @@ root.tr = threading.Thread(target=acc_info_update).start()
 info_label = Label(root, text = "-.-.-.-", fg = "black", font = ("Arial", 16))
 info_label.pack(pady = (30,10))
 
+# Create A Button
+on_button = Button(root, image = off, bd = 0, activebackground='LightGray')
+if get_status() == True:
+    on_button.config(image = on)
+
 def change_ip_text():
     while get_status()=="Connecting":
         time.sleep(0.5)
@@ -214,11 +219,7 @@ def switch():
         on_button.config(image = off)
 
 
-# Create A Button
-on_button = Button(root, image = off, bd = 0, command = switch,
-    activebackground='LightGray')
-if get_status() == True:
-    on_button.config(image = on)
+on_button.config(command = switch)
 on_button.pack(pady = 0)
 
 
