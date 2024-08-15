@@ -84,7 +84,7 @@ def acc_info_update():
     if acc_type == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
     else:
-        acc_label.config(text = "WARP", fg = "DarkOrange")
+        acc_label.config(text = "WARP", fg = "Tomato")
 
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
@@ -135,7 +135,7 @@ def enroll():
 # create root windows
 root = Tk()
 
-bgcolor = "LightGray"
+bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 #helpmenu.add_separator()
@@ -174,20 +174,20 @@ else:
     warp_version = version
 warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
 
-lbl = Label(root, text = "GUI v0.2", fg = "black", bg = bgcolor,
+lbl = Label(root, text = "GUI v0.2", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 12), pady=10, padx=10)
 lbl.grid()
 lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
-acc_label.pack(pady = (10,0))
+acc_label.pack(pady = 0)
 
 root.tr = threading.Thread(target=acc_info_update).start()
 
 #IP info
-info_label = Label(root, fg = "black", bg = bgcolor, font = ("Arial", 16),
-    text = "-.-.-.-")
+info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
+    font = ("Arial", 14), text = "-=-.-=-.-=-.-=-")
 info_label.pack(pady = (30,10))
 
 # Create A Button
@@ -214,7 +214,7 @@ def switch():
     else:
         status = subprocess.getoutput("warp-cli connect")
             
-    info_label.config(text = "-.-.-.-")
+    info_label.config(text = "-=-.-=-.-=-.-=-")
     root.tr = threading.Thread(target=change_ip_text).start()
     
     if get_status() == True:
@@ -229,10 +229,10 @@ on_button.pack(pady = 0)
 
 # Create Label
 status_label = Label(root, text = "", fg = "Black", bg = bgcolor, font = ("Arial", 15))
-status_label.pack(padx=0, pady=0)
+status_label.pack(padx=0, pady=(0,10))
 
 stats_label = Label(root, text = "", bg = bgcolor, font = ("Courier Condensed", 10))
-stats_label.pack(padx=10, pady=(20,10))
+stats_label.pack(padx=10, pady=(10,10))
 old_warp_stats = warp_stats = ""
 
 class TestThreading(object):
@@ -259,7 +259,7 @@ class TestThreading(object):
                         wsl = warp_stats.splitlines()
                         warp_stats = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
                         #print("\n", warp_stats)
-                        stats_label.config(text = warp_stats)
+                        stats_label.config(text = warp_stats, fg = "MidNightBlue")
                         old_warp_stats = warp_stats
                 """
                 stats_list = warp_stats.split()
@@ -280,15 +280,15 @@ class TestThreading(object):
                 pre_loss = loss
                 """
                 acc_info_update()
-                status_label.config(text = "Connected", fg = "Black",
+                status_label.config(text = "Connected", fg = "Blue",
                     font = ("Arial", 15, 'bold') )
                 on_button.config(image = on)
             elif status == False:
-                status_label.config(text = "Disconnected", fg = "Gray",
+                status_label.config(text = "Disconnected", fg = "DimGray",
                     font = ("Arial", 15, '') )
                 on_button.config(image = off)
             elif status == "Connecting":
-                status_label.config(text = "Connecting...", fg = "Darkgray",
+                status_label.config(text = "Connecting...", fg = "DimGray",
                     font = ("Arial", 15, 'italic') )
 
             time.sleep(self.interval)
