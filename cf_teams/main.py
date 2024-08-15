@@ -127,7 +127,7 @@ def enroll():
             if organization != "":
                 new_command = "yes yes | warp-cli teams-enroll " + organization
                 subprocess.Popen(new_command, shell=True)
-                slogan.config(image = logo)
+                slogan.config(image = tmlogo)
     except:
         pass
     switch()
@@ -147,10 +147,10 @@ logo_dir = dir_path + "/cf4teams.png"
 on_dir = dir_path + "/on.png"
 off_dir = dir_path + "/off.png"
 cflogo_dir = dir_path + "/cflogo.png"
-logo = PhotoImage(file = logo_dir)
+tmlogo = PhotoImage(file = logo_dir)
 appicon_dir = dir_path + "/appicon.png"
 appicon = PhotoImage(file = appicon_dir)
-logo = logo.subsample(10)
+tmlogo = tmlogo.subsample(10)
 on = PhotoImage(file = on_dir)
 on = on.subsample(3)
 off = PhotoImage(file = off_dir)
@@ -300,7 +300,7 @@ slogan = Button(frame, image = "", command=enroll)
 if acc_type == True:
     slogan.config(image = cflogo)
 else:
-    slogan.config(image = logo)
+    slogan.config(image = tmlogo)
 slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 #update_button = Button(root, text="Update",
