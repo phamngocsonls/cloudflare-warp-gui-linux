@@ -234,9 +234,6 @@ def change_ip_text():
 
 # Define our switch function
 def switch():
-    #global is_on
-    # Determin is on or switch
-
     if get_status() == "UP":
         status = subprocess.getoutput("warp-cli disconnect")
     else:
@@ -276,10 +273,7 @@ class TestThreading(object):
 
     def run(self,acc_label):
         global warp_stats
-        """
-        pre_latency = ""
-        pre_loss = ""
-        """
+
         while True:
             status = get_status()
             if status == "UP":
@@ -292,24 +286,6 @@ class TestThreading(object):
                         #print("\n", warp_stats)
                         stats_label.config(text = warp_stats, fg = "MidNightBlue")
                         old_warp_stats = warp_stats
-                """
-                stats_list = warp_stats.split()
-                #up_time = stats_list[7]
-                latency = stats_list[14]
-                loss = stats_list[17]
-                if pre_latency != latency or  pre_loss != loss:
-                    try:
-                        my_label_2.destroy()
-                    except:
-                        pass
-                    my_label_2 = Label(root, 
-                        text = "Latency: "+ latency + ", Loss: " + loss[:-1],
-                        fg = "Black", 
-                        font = ("Arial", 12))
-                    my_label_2.pack(padx=0, pady=0)
-                pre_latency = latency
-                pre_loss = loss
-                """
                 acc_info_update()
                 status_label.config(text = "Connected", fg = "Blue",
                     font = ("Arial", 15, 'bold') )
