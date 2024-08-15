@@ -55,9 +55,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
 
+
 def install_cert():
     p = subprocess.Popen("sudo apt-get update; sudo apt-get install ca-certificates -y; curl -s -o /tmp/Cloudflare_CA.pem https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.pem; cp /tmp/Cloudflare_CA.pem /usr/local/share/ca-certificates/Cloudflare_CA.crt; sudo update-ca-certificate; sudo apt install libnss3-tools; curl -s -o /tmp/cloudflare.crt https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.crt; ls /home/ | awk '{print $1}' | xargs -i mkdir -p /home/{}/.pki/nssdb; ls /home/ | awk '{print $1}' | xargs -i certutil -d sql:/home/{}/.pki/nssdb -A -t 'C,,' -n 'Cloudflare-CA' -i /tmp/cloudflare.crt",shell=True)
     p.communicate()
+
 
 def update():
     version = subprocess.getoutput("warp-cli --version")
@@ -72,11 +74,14 @@ def update():
         start_dir = "python3 " + dir_path + "/main.py"
         os.system(start_dir)
 
+
 def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
 
+
 acc_type = get_acc_type();
+
 
 def acc_info_update():
     global acc_type
@@ -94,16 +99,21 @@ def acc_info_update():
     else:
         slogan.config(image = tmlogo)
 
+
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
 
+
 regstr_missng = False
+
 
 def registration_missing():
     global regstr_missng
     return regstr_missng
 
+
 status_err = ""
+
 
 def get_status():
     global status_err
@@ -131,6 +141,7 @@ def get_status():
         return "RGM"
     return "ERR"
 
+
 def get_ip():
     try:
         ipdis = get('https://ifconfig.me/ip', timeout=(0.5,0.5)).text
@@ -141,6 +152,7 @@ def get_ip():
         return ipdis + " (" + details + ")"
     except:
         return ipdis
+
 
 def enroll():
     subprocess.getoutput("warp-cli disconnect")
@@ -158,8 +170,9 @@ def enroll():
     except:
         pass
     switch()
-    
-# create root windows
+
+
+# create root windows ##########################################################
 root = Tk()
 
 bgcolor = "GainsBoro"
@@ -226,6 +239,8 @@ on_button = Button(root, image = off, bd = 0,
 if status_old == "UP":
     on_button.config(image = on)
 
+################################################################################
+
 def wait_status():
     status = get_status()
     if status == "CN":
@@ -237,8 +252,10 @@ def wait_status():
         return get_status()
     return status
 
+
 def change_ip_text():
     info_label.config(text = get_ip())
+
 
 def update_guiview():
     global status_old
@@ -259,15 +276,16 @@ def update_guiview():
         on_button.config(image = off)
         stats_label.config(fg = "DimGray")
     else:
-        print("change_ip_text status: ", status)
+        #print("change_ip_text status: ", status)
         return status
 
     if status_old == "UP" or status_old == "DN":
         #root.tr = threading.Thread(target=change_ip_text).start()
         acc_info_update()
         change_ip_text()
-    else:
-        print("upview status: ", status_old)
+    #else:
+    #    print("upview status: ", status_old)
+
 
 # Define our switch function
 def switch():
@@ -284,16 +302,17 @@ def switch():
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli connect")
-    else:
-        print("WARNING(status_old invalid): ", status_old)
+    #else:
+    #    print("WARNING(status_old invalid): ", status_old)
 
     update_guiview()
+
+################################################################################
 
 on_button.config(command = switch)
 on_button.pack(pady = 0)
 
 root.tr = threading.Thread(target=change_ip_text).start()
-
 
 # Create Label
 status_label = Label(root, text = "", fg = "Black", bg = bgcolor, font = ("Arial", 15))
@@ -302,6 +321,8 @@ status_label.pack(padx=0, pady=(0,10))
 stats_label = Label(root, text = "", bg = bgcolor, font = ("Courier Condensed", 10))
 stats_label.pack(padx=10, pady=(10,10))
 old_warp_stats = warp_stats = ""
+
+################################################################################
 
 class TestThreading(object):
 
@@ -343,8 +364,8 @@ class TestThreading(object):
 
 
 root.tr = TestThreading()
-#logo
-# Define Our Images
+
+################################################################################
 
 frame = Frame(root, bg = bgcolor)
 frame.pack(side=BOTTOM)
@@ -358,10 +379,7 @@ else:
     slogan.config(image = tmlogo)
 slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
-#update_button = Button(root, text="Update",
-#                    command=update)
-#update_button.place(x=270,y=410)     
-# all widgets will be here
-# Execute Tkinter
+################################################################################
+
 root.config(menu=menubar)
 root.mainloop()
