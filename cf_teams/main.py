@@ -163,7 +163,8 @@ cflogo = cflogo.subsample(2)
 # root window title and dimension
 root.title("WARP GUI for linux")
 # Set geometry (widthxheight)
-root.geometry('350x460')
+root.geometry('360x480')
+
 root.iconphoto(False,appicon)
 
 
