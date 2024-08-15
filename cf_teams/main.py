@@ -256,6 +256,7 @@ def wait_status():
 def change_ip_text():
     info_label.config(text = get_ip())
 
+    info_label.update()
 
 def update_guiview():
     global status_old
@@ -278,6 +279,9 @@ def update_guiview():
     else:
         #print("change_ip_text status: ", status)
         return status
+
+    on_button.update()
+    stats_label.update()
 
     if status_old == "UP" or status_old == "DN":
         #root.tr = threading.Thread(target=change_ip_text).start()
@@ -304,6 +308,7 @@ def switch():
         retstr = subprocess.getoutput("warp-cli connect")
     #else:
     #    print("WARNING(status_old invalid): ", status_old)
+    status_label.update()
 
     update_guiview()
 
@@ -347,6 +352,7 @@ class TestThreading(object):
                         #print("\n", warp_stats)
                         stats_label.config(text = warp_stats, fg = "MidNightBlue")
                         old_warp_stats = warp_stats
+                        stats_label.update()
                 acc_info_update()
                 status_label.config(text = "Connected", fg = "Blue",
                     font = ("Arial", 15, 'bold') )
@@ -359,6 +365,9 @@ class TestThreading(object):
             elif status == "CN":
                 status_label.config(text = "Connecting...", fg = "DimGray",
                     font = ("Arial", 15, 'italic') )
+            status_label.update()
+            stats_label.update()
+            on_button.update()
 
             time.sleep(self.interval)
 
