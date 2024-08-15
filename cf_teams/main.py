@@ -226,28 +226,68 @@ on_button = Button(root, image = off, bd = 0,
 if status_old == "UP":
     on_button.config(image = on)
 
-def change_ip_text():
-    while get_status() == "CN":
+def wait_status():
+    status = get_status()
+    if status == "CN":
+        stats_label.config(text = "")
+        while status == "CN":
+            time.sleep(0.5)
+            status = get_status()
         time.sleep(0.5)
-    time.sleep(0.5)
+        return get_status()
+    return status
+
+def change_ip_text():
     info_label.config(text = get_ip())
+
+def update_guiview():
+    global status_old
+    global status_err
+
+    status_old = wait_status()
+
+    if status_err != "":
+        err_str = status_err.split("\n")
+        err_str = err_str[0].split(".")
+        err_str = "\n".join(err_str)
+        #err_str = err_str[0] + "\n" + err_str[1]
+        stats_label.config(text = err_str, fg = "OrangeRed")
+        #print("err_str: ", err_str)
+    elif status == "UP":
+        on_button.config(image = on)
+    elif status == "DN":
+        on_button.config(image = off)
+        stats_label.config(fg = "DimGray")
+    else:
+        print("change_ip_text status: ", status)
+        return status
+
+    if status_old == "UP" or status_old == "DN":
+        #root.tr = threading.Thread(target=change_ip_text).start()
+        acc_info_update()
+        change_ip_text()
+    else:
+        print("upview status: ", status_old)
 
 # Define our switch function
 def switch():
-    if get_status() == "UP":
-        status = subprocess.getoutput("warp-cli disconnect")
-    else:
-        status = subprocess.getoutput("warp-cli connect")
+    global status_old
+    global status_err
 
-    stats_label.config(fg = "DimGray")
-    info_label.config(text = "-=-.-=-.-=-.-=-")
-    root.tr = threading.Thread(target=change_ip_text).start()
-    
-    if get_status() == "UP":
-        on_button.config(image = on)
+    if status_old == "UP":
+        status_old = "DC"
+        status_label.config(text = "Disconnecting...", fg = "Dimgray",
+            font = ("Arial", 15, 'italic') )
+        retstr = subprocess.getoutput("warp-cli disconnect")
+    elif status_old == "DN":
+        status_old = "CN"
+        status_label.config(text = "Connecting...", fg = "Dimgray",
+            font = ("Arial", 15, 'italic') )
+        retstr = subprocess.getoutput("warp-cli connect")
     else:
-        on_button.config(image = off)
+        print("WARNING(status_old invalid): ", status_old)
 
+    update_guiview()
 
 on_button.config(command = switch)
 on_button.pack(pady = 0)
