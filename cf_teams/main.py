@@ -175,7 +175,7 @@ else:
     warp_version = version
 warpver_label = Label(root, text = warp_version, fg = "black", font = ("Arial", 12))
 
-lbl = Label(root, text = "v0.1e")
+lbl = Label(root, text = "GUI v0.2", fg = "black", font = ("Arial", 12), pady=10, padx=10)
 lbl.grid()
 lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
