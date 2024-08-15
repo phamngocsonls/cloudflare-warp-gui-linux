@@ -76,6 +76,18 @@ def update():
         os.system(start_dir)
 
 
+def registration_delete():
+    status_err = subprocess.getoutput("warp-cli registration delete")
+    print("registration_delete: ", status_err)
+    if status_err != "":
+        err_str = status_err.split("\n")
+        err_str = err_str[0].split(".")
+        err_str = "\n".join(err_str)
+        stats_label.config(text = err_str, fg = "OrangeRed")
+        stats_label.update()
+    update_guiview(0)
+
+
 def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
@@ -205,6 +217,7 @@ helpmenu = Menu(menubar,tearoff=0)
 menubar.add_cascade(label="MENU",menu=helpmenu)
 helpmenu.add_command(label="Update or Install", command=update)
 helpmenu.add_command(label="Install Certificate", command=install_cert)
+helpmenu.add_command(label="Registration Delete", command=registration_delete)
 
 #button
 logo_dir = dir_path + "/cf4teams.png"
