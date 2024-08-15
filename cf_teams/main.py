@@ -268,16 +268,13 @@ def update_guiview():
         err_str = status_err.split("\n")
         err_str = err_str[0].split(".")
         err_str = "\n".join(err_str)
-        #err_str = err_str[0] + "\n" + err_str[1]
         stats_label.config(text = err_str, fg = "OrangeRed")
-        #print("err_str: ", err_str)
     elif status == "UP":
         on_button.config(image = on)
     elif status == "DN":
         on_button.config(image = off)
         stats_label.config(fg = "DimGray")
     else:
-        #print("change_ip_text status: ", status)
         return status
 
     on_button.update()
@@ -287,8 +284,6 @@ def update_guiview():
         #root.tr = threading.Thread(target=change_ip_text).start()
         acc_info_update()
         change_ip_text()
-    #else:
-    #    print("upview status: ", status_old)
 
 
 # Define our switch function
@@ -308,10 +303,8 @@ def switch():
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli connect")
-    #else:
-    #    print("WARNING(status_old invalid): ", status_old)
+
     status_label.update()
-    
     update_guiview()
 
 ################################################################################
@@ -351,7 +344,6 @@ class TestThreading(object):
                     if warp_stats != old_warp_stats:
                         wsl = warp_stats.splitlines()
                         warp_stats = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
-                        #print("\n", warp_stats)
                         stats_label.config(text = warp_stats, fg = "MidNightBlue")
                         old_warp_stats = warp_stats
                         stats_label.update()
