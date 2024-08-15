@@ -124,7 +124,6 @@ def cf_info():
 
 regstr_missng = False
 
-
 def registration_missing():
     global regstr_missng
     return regstr_missng
@@ -333,7 +332,6 @@ def update_guiview(errlog=1):
 # Define our switch function
 def switch():
     global status_old
-    global status_err
 
     on_button.config(state = DISABLED)
 
