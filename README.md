@@ -1,6 +1,12 @@
-# Cloudflare WARP GUI
+## CloudFlare WARP/TEAM GUI
 
-## Install scrip:
+A python TK graphic interface to manage the CloudFlare WARP / Team
+Zero Trust virtual private network (VPN) connection which also offers
+an advertising-free and safe browsing domain name system (DNS).
+
+----
+
+### Install script
 
 ```
 sudo apt-get install python3-tk -y
@@ -12,14 +18,23 @@ sudo chmod +x /usr/bin/cf4teams
 
 Find "Cloudflare WARP" in app menu
 
-## Update GUI"
+----
 
+### Update GUI
 
-pull code and Install again
+pull from git repository the code and install it again
 
+----
 
-## Update/Install/Add certificate
+### Update / Install / Add certificate
 
-`sudo /usr/bin/cf4teams`
+```
+sudo /usr/bin/cf4teams
+```
 
+----
+
+### Screenshots
+
+![four stages screenshots](warp-gui-4-steps.png)
 
