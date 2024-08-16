@@ -376,8 +376,15 @@ def slide_update(status):
             font = ("Arial", 15, '') )
         on_button.config(image = off)
         stats_label.config(fg = "DimGray")
+    elif status == "RGM":
+        status_label.config(text = "No registration", fg = "DimGray",
+            font = ("Arial", 15, '') )
+        on_button.config(image = off)
     elif status == "CN":
         status_label.config(text = "Connecting...", fg = "DimGray",
+            font = ("Arial", 15, 'italic') )
+    elif status == "DC":
+        status_label.config(text = "Disconnecting...", fg = "DimGray",
             font = ("Arial", 15, 'italic') )
     else:
         change = 0
