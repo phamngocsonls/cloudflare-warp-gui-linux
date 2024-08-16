@@ -367,7 +367,6 @@ status_label.pack(padx=0, pady=(0,10))
 
 stats_label = Label(root, text = "", bg = bgcolor, font = ("Courier Condensed", 10))
 stats_label.pack(padx=10, pady=(10,10))
-old_warp_stats = warp_stats = ""
 
 ################################################################################
 
@@ -401,33 +400,40 @@ def slide_update(status):
         status_label.update()
 
 
+old_warp_stats = warp_stats = ""
+
+def stats_label_update():
+    global warp_stats, old_warp_stats
+        
+    old_warp_stats = warp_stats
+    warp_stats = subprocess.getoutput("warp-cli tunnel stats")
+    if warp_stats == "":
+        warp_stats = old_warp_stats
+    elif warp_stats != old_warp_stats:
+        old_warp_stats = warp_stats
+        wsl = warp_stats.splitlines()
+        wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
+        stats_label.config(text = wsl, fg = "MidNightBlue")
+        stats_label.update()
+
+
 class TestThreading(object):
 
     def __init__(self, interval=1):
+        self.status_oldval = ""
         self.interval = interval
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
         thread.start()
 
     def run(self,acc_label):
-        global warp_stats
-
         while True:
             status = get_status()
             if status == "UP":
-                root.tr = threading.Thread(target=acc_info_update).start()
-                old_warp_stats = warp_stats
-                warp_stats = subprocess.getoutput("warp-cli tunnel stats")
-                if warp_stats == "":
-                    warp_stats = old_warp_stats
-                elif warp_stats != old_warp_stats:
-                    old_warp_stats = warp_stats
-                    wsl = warp_stats.splitlines()
-                    wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
-                    stats_label.config(text = wsl, fg = "MidNightBlue")
-                    stats_label.update()
-            if status == "UP" or status == "DN":
-                slide_update(status)
+                stats_label_update()
+            if self.status_oldval != status:
+                self.status_oldval = status
+                update_guiview(status, 0)
             time.sleep(self.interval)
 
 
