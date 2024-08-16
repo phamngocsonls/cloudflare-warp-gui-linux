@@ -77,14 +77,18 @@ def update():
 
 
 def registration_delete():
-    status_err = subprocess.getoutput("warp-cli registration delete")
-    print("registration_delete: ", status_err)
-    if status_err != "":
-        err_str = status_err.split("\n")
+    global status_old, acc_type
+
+    err_str = subprocess.getoutput("warp-cli registration delete")
+    status_old = "RGM"
+    acc_type = ""
+
+    if err_str != "":
+        err_str = err_str.split("\n")
         err_str = err_str[0].split(".")
         err_str = "\n".join(err_str)
-        stats_label.config(text = err_str, fg = "OrangeRed")
-        stats_label.update()
+    stats_label.config(text = err_str, fg = "OrangeRed")
+    stats_label.update()
 
     update_guiview(get_status(), 0)
 
