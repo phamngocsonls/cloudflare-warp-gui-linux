@@ -322,9 +322,9 @@ def update_guiview(errlog=1):
     stats_label.update()
 
     if status != "CN" and status != "DC":
-        #root.tr = threading.Thread(target=change_ip_text).start()
         root.tr = threading.Thread(target=acc_info_update).start()
-        change_ip_text()
+        root.tr = threading.Thread(target=change_ip_text).start()
+        slide_update(status)
 
 
 # Define our switch function
