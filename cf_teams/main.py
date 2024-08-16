@@ -137,11 +137,12 @@ def get_status():
     global status_err, regstr_missng, status_old, ipaddr
 
     status = subprocess.getoutput("warp-cli status")
-    status = status.split("\n")[0]
-    if status.find("Success") > -1:
+    if status.find("Success") == 0:
         time.sleep(0.5)
         return get_status()
-    status_err = status
+    status = status.split("\n")[0]
+    status_err = status.split(".")
+    status_err = "\n".join(status_err)
 
     if status.find("Disconnected") > -1:
         regstr_missng = False
@@ -307,10 +308,7 @@ def update_guiview(errlog=1):
 
     stats_err = 0
     if errlog and status_err != "":
-        err_str = status_err.split("\n")
-        err_str = err_str[0].split(".")
-        err_str = "\n".join(err_str)
-        stats_label.config(text = err_str, fg = "OrangeRed")
+        stats_label.config(text = status_err, fg = "OrangeRed")
         stats_err = 1
 
     if status == "UP":
