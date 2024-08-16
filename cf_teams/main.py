@@ -85,7 +85,8 @@ def registration_delete():
         err_str = "\n".join(err_str)
         stats_label.config(text = err_str, fg = "OrangeRed")
         stats_label.update()
-    update_guiview(0)
+
+    update_guiview(get_status(), 0)
 
 
 def get_acc_type():
@@ -204,7 +205,7 @@ def enroll():
                 slogan.config(image = tmlogo)
     except:
         pass
-    update_guiview()
+    auto_update_guiview()
 
 
 # create root windows ##########################################################
@@ -301,10 +302,12 @@ def change_ip_text():
     info_label.update()
 
 
-def update_guiview(errlog=1):
-    global status_err
+def auto_update_guiview(errlog=1):
+    update_guiview(wait_status(), errlog)
 
-    status = wait_status()
+
+def update_guiview(status, errlog=1):
+    global status_err
 
     stats_err = 0
     if errlog and status_err != "":
@@ -345,7 +348,7 @@ def switch():
         retstr = subprocess.getoutput("warp-cli connect")
 
     status_label.update()
-    update_guiview()
+    auto_update_guiview()
 
 ################################################################################
 
