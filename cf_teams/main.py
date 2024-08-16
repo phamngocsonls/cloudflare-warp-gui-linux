@@ -77,11 +77,10 @@ def update():
 
 
 def registration_delete():
-    global status_old, acc_type
+    global status_old
 
     err_str = subprocess.getoutput("warp-cli registration delete")
     status_old = "RGM"
-    acc_type = ""
 
     if err_str != "":
         err_str = err_str.split("\n")
@@ -98,15 +97,12 @@ def get_acc_type():
     return (account.find("Team") > -1)
 
 
-acc_type = "";
+acc_type = ""
 
 def acc_info_update():
     global acc_type
-    acc_old = acc_type
 
     acc_type = get_acc_type()
-    if acc_old == acc_type:
-        return
 
     if acc_type == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
