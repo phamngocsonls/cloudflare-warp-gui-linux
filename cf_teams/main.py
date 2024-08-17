@@ -258,7 +258,7 @@ root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
-lbl = Label(root, text = "GUI v0.6", fg = "DimGray", bg = bgcolor,
+lbl = Label(root, text = "GUI v0.7", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 12), pady=10, padx=10)
 lbl.grid()
 lbl.place(relx=0.0, rely=1.0, anchor='sw')
