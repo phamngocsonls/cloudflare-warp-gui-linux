@@ -106,8 +106,16 @@ def acc_info_update():
 
     if acc_type == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
+        if status_old == "UP":
+            root.iconphoto(False,appicon_team)
+        else:
+            root.iconphoto(False,appicon_pass)
     else:
         acc_label.config(text = "WARP", fg = "Tomato")
+        if status_old == "UP":
+            root.iconphoto(False,appicon_warp)
+        else:
+            root.iconphoto(False,appicon_pass)
     acc_label.update()
 
     if registration_missing() == True:
@@ -226,8 +234,14 @@ on_dir = dir_path + "/on.png"
 off_dir = dir_path + "/off.png"
 cflogo_dir = dir_path + "/cflogo.png"
 tmlogo = PhotoImage(file = logo_dir)
-appicon_dir = dir_path + "/appicon.png"
-appicon = PhotoImage(file = appicon_dir)
+appicon_path = dir_path + "/appicon-init.png"
+appicon_init = PhotoImage(file = appicon_path)
+appicon_path = dir_path + "/appicon-pass.png"
+appicon_pass = PhotoImage(file = appicon_path)
+appicon_path = dir_path + "/appicon-warp.png"
+appicon_warp = PhotoImage(file = appicon_path)
+appicon_path = dir_path + "/appicon-team.png"
+appicon_team = PhotoImage(file = appicon_path)
 tmlogo = tmlogo.subsample(10)
 on = PhotoImage(file = on_dir)
 on = on.subsample(3)
@@ -241,7 +255,7 @@ root.title("WARP GUI")
 # Set geometry (widthxheight)
 root.geometry('360x480')
 root.resizable(False,False)
-root.iconphoto(False,appicon)
+root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
 lbl = Label(root, text = "GUI v0.6", fg = "DimGray", bg = bgcolor,
