@@ -36,5 +36,11 @@ sudo /usr/bin/cf4teams
 
 ### Screenshots
 
+This application allows to (dis)connect from both warp/team VPNs
+
 ![four stages screenshots](warp-gui-4-steps.png)
+
+Icon on the taskbar changes with the connection status and the VPN type
+
+<p><div align="center"><img src="warp-gui-4-icons.png" width="50%" height="50%" alt="four status icons"></div></p>
 
