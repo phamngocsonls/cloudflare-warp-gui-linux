@@ -240,7 +240,7 @@ cflogo = cflogo.subsample(2)
 root.title("WARP GUI")
 # Set geometry (widthxheight)
 root.geometry('360x480')
-
+root.resizable(False,False)
 root.iconphoto(False,appicon)
 root.config(bg = bgcolor)
 
