@@ -251,7 +251,6 @@ lbl.place(relx=0.0, rely=1.0, anchor='sw')
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
-root.tr = threading.Thread(target=acc_info_update).start()
 acc_label.pack(pady = 0)
 
 version = cf_info()
@@ -275,6 +274,8 @@ if get_status() == "UP":
     on_button.config(image = on)
 else:
     info_label.config(fg = "DimGray")
+
+root.tr = threading.Thread(target=acc_info_update).start()
 
 ################################################################################
 
