@@ -33,7 +33,7 @@ pull from git repository the code and install it again
 ### Update or Install or Add certificate
 
 ```
-sudo python3 cf_team/main.py
+sudo python3 warp-gui/main.py
 ```
 
 Then use the menu to select your action to execute.
