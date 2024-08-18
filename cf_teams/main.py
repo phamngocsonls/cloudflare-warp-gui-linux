@@ -76,23 +76,53 @@ def update():
         os.system(start_dir)
 
 
-def registration_delete():
-    global status_old
-
-    err_str = subprocess.getoutput("warp-cli registration delete")
-    status_old = "RGM"
+def update_guiview_by_menu(err_str, info_str):
+    global update_thread_pause
 
     if err_str != "":
         err_str = err_str.split("\n")
-        err_str = err_str[0].split(".")
-        err_str = "\n".join(err_str)
+        if err_str[0] == "Success":
+            err_str = err_str[0] + ": " + info_str
+        else:
+            err_str = err_str[0].split(".")
+            err_str = "\n".join(err_str)
+
     stats_label.config(text = err_str, fg = "OrangeRed")
     stats_label.update()
 
     update_guiview(get_status(), 0)
+    update_thread_pause = False
 
 
 update_thread_pause = False
+
+def registration_delete():
+    global status_old, update_thread_pause
+
+    update_thread_pause = True
+    err_str = subprocess.getoutput("warp-cli registration delete")
+    status_old = "RGM"
+
+    update_guiview_by_menu(err_str, "registration delete")
+
+
+def session_renew():
+    global status_old, update_thread_pause
+
+    oldval = status_old
+    cmdline = "warp-cli registration new"
+    if oldval == "UP":
+        cmdline = cmdline + " && warp-cli connect"
+    update_thread_pause = True
+    err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
+    if oldval == "UP":
+        status_old = "CN"
+    else:
+        status_old = "DN"
+
+    update_guiview_by_menu(err_str, "WARP session renew")
+
+
 def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
@@ -223,11 +253,12 @@ root = Tk()
 bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
-#helpmenu.add_separator()
 menubar.add_cascade(label="MENU",menu=helpmenu)
 helpmenu.add_command(label="Update or Install", command=update)
 helpmenu.add_command(label="Install Certificate", command=install_cert)
+helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
+helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
 
 #button
 logo_dir = dir_path + "/cf4teams.png"
@@ -363,10 +394,6 @@ def switch():
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli connect")
 
-    elif status_old == "RGM":
-        #retry Registration
-        retstr = subprocess.getoutput("warp-cli registration new")
-        retstr = subprocess.getoutput("warp-cli connect")
     status_label.update()
     auto_update_guiview()
 
@@ -399,7 +426,7 @@ def slide_update(status):
         on_button.config(image = off)
         stats_label.config(fg = "DimGray")
     elif status == "RGM":
-        status_label.config(text = "No registration \n Click the Switch button and wait 3s", fg = "DimGray",
+        status_label.config(text = "No registration", fg = "DimGray",
             font = ("Arial", 15, '') )
         on_button.config(image = off)
     elif status == "CN":
