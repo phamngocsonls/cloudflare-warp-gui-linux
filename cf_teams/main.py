@@ -92,6 +92,7 @@ def registration_delete():
     update_guiview(get_status(), 0)
 
 
+update_thread_pause = False
 def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     return (account.find("Team") > -1)
@@ -443,12 +444,13 @@ class TestThreading(object):
 
     def run(self,acc_label):
         while True:
-            status = get_status()
-            if status == "UP":
-                stats_label_update()
-            if self.status_oldval != status:
-                self.status_oldval = status
-                update_guiview(status, 0)
+            if update_thread_pause == False:
+                status = get_status()
+                if status == "UP":
+                    stats_label_update()
+                if self.status_oldval != status:
+                    self.status_oldval = status
+                    update_guiview(status, 0)
             time.sleep(self.interval)
 
 ################################################################################
