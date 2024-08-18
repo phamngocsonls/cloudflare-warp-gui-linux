@@ -6,17 +6,21 @@ an advertising-free and safe browsing domain name system (DNS).
 
 ----
 
-### Install script
+### Prerequisites
 
 ```
-sudo apt-get install python3-tk -y
-python3 install.py
-sudo cp -r cf_teams /usr/share/
-sudo cp teams.sh /usr/bin/cf4teams
-sudo chmod +x /usr/bin/cf4teams
+sudo apt-get install pip3 python3 python3-tk -y
+pip3 install ipinfo requests
 ```
 
-Find "Cloudflare WARP" in app menu
+### Installation
+
+```
+bash install.sh
+```
+
+Then search for **CloudFlare** icon on the desktop and enable it for
+running, using the mouse right button menu.
 
 ----
 
@@ -26,11 +30,13 @@ pull from git repository the code and install it again
 
 ----
 
-### Update / Install / Add certificate
+### Update or Install or Add certificate
 
 ```
-sudo /usr/bin/cf4teams
+sudo python3 cf_team/main.py
 ```
+
+Then use the menu to select your action to execute.
 
 ----
 
