@@ -451,9 +451,6 @@ class TestThreading(object):
                 update_guiview(status, 0)
             time.sleep(self.interval)
 
-
-root.tr = TestThreading()
-
 ################################################################################
 
 frame = Frame(root, bg = bgcolor)
@@ -471,4 +468,5 @@ slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 ################################################################################
 
 root.config(menu=menubar)
+root.tr = TestThreading()
 root.mainloop()
