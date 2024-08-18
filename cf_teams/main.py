@@ -362,6 +362,10 @@ def switch():
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli connect")
 
+    elif status_old == "RGM":
+        #retry Registration
+        retstr = subprocess.getoutput("warp-cli registration new")
+        retstr = subprocess.getoutput("warp-cli connect")
     status_label.update()
     auto_update_guiview()
 
@@ -394,7 +398,7 @@ def slide_update(status):
         on_button.config(image = off)
         stats_label.config(fg = "DimGray")
     elif status == "RGM":
-        status_label.config(text = "No registration", fg = "DimGray",
+        status_label.config(text = "No registration \n Click the Switch button and wait 3s", fg = "DimGray",
             font = ("Arial", 15, '') )
         on_button.config(image = off)
     elif status == "CN":
