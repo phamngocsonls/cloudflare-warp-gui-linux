@@ -261,8 +261,8 @@ helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
 
 #button
 logo_dir = dir_path + "/cf4teams.png"
-on_dir = dir_path + "/on.png"
-off_dir = dir_path + "/off.png"
+on_dir = dir_path + "/slide-on.png"
+off_dir = dir_path + "/slide-off.png"
 cflogo_dir = dir_path + "/cflogo.png"
 tmlogo = PhotoImage(file = logo_dir)
 appicon_path = dir_path + "/appicon-init.png"
