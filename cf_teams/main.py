@@ -36,16 +36,15 @@
 #
 ################################################################################
 
-# Import Module
+# Import pip3 Module
 from tkinter import *
 import subprocess
 import time
 from requests import get
 import tkinter.font as tkFont
-import os 
+import os
 import threading
 import ipinfo
-import os
 from tkinter import simpledialog
 from random import choice
 
