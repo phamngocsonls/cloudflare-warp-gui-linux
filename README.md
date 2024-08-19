@@ -6,14 +6,33 @@ an advertising-free and safe browsing domain name system (DNS).
 
 ----
 
-### Prerequisites
+### Pre-requisites
 
 ```
 sudo apt-get install pip3 python3 python3-tk -y
 pip3 install ipinfo requests
 ```
 
-### Installation
+
+### Direct execution
+
+The warp-gui folder contains all the stuff needs to run this application
+
+```
+python3 warp-gui/warp-gui.py
+```
+
+or make it executable and call it directly
+
+```
+chmod a+x warp-gui/warp-gui.py
+./warp-gui/warp-gui.py
+```
+
+Hence the installtion script is checks, copying and creating a desktop icon/link
+
+
+### Install script
 
 ```
 bash install.sh
@@ -30,7 +49,9 @@ pull from git repository the code and install it again
 
 ----
 
-### Update or Install or Add certificate
+### Install or update warp-cli or add certificates
+
+To install and update the warp-cli or add certificates, it is required the root privileges
 
 ```
 sudo python3 warp-gui/warp-gui.py
