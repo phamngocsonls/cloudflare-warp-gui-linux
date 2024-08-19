@@ -1,4 +1,4 @@
-## CloudFlare WARP/TEAM GUI
+## CloudFlare Graphical User Interface
 
 A python TK graphic interface to manage the CloudFlare WARP / Team
 Zero Trust virtual private network (VPN) connection which also offers
@@ -51,7 +51,8 @@ pull from git repository the code and install it again
 
 ### Install or update warp-cli or add certificates
 
-To install and update the warp-cli or add certificates, it is required the root privileges
+To install and update the warp-cli or add certificates, it is required the root
+privileges:
 
 ```
 sudo python3 warp-gui/warp-gui.py
@@ -70,4 +71,16 @@ This application allows to (dis)connect from both warp/team VPNs
 Icon on the taskbar changes with the connection status and the VPN type
 
 <p><div align="center"><img src="warp-gui-4-icons.png" width="50%" height="50%" alt="four status icons"></div></p>
+
+----
+
+## License
+
+The project and the installation script are under the very permissive 3-clauses
+BSD license. While the python application is licensed under GPLv2 because
+contributions are expected to be given back. Some images are strictly related
+with CloudFlare trademark and related services and cannot be relicensed.
+However, because this GUI is strictly and exclusively related with `warp-cli`
+and their services, their integration within this project can be considered a
+fair use as intended in trademark and copyright common laws.
 
