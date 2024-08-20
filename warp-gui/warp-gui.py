@@ -76,7 +76,7 @@ def update():
     time.sleep(3)
     new_version = subprocess.getoutput("warp-cli --version")
 
-    if new_version != version:
+    if new_version != version: #TODO: why restarting the application?
         subprocess.getoutput("yes yes | warp-cli --accept-tos registration new")
         root.destroy()
         start_dir = "python3 " + dir_path + "/warp-gui.py"
