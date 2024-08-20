@@ -396,6 +396,7 @@ def update_guiview(status, errlog=1):
     if status != "CN" and status != "DC":
         root.tr = threading.Thread(target=acc_info_update).start()
         root.tr = threading.Thread(target=change_ip_text).start()
+        root.tr = threading.Thread(target=get_settings).start()
         slide_update(status)
 
 
@@ -500,6 +501,7 @@ class TestThreading(object):
                 if self.status_oldval != status:
                     self.status_oldval = status
                     update_guiview(status, 0)
+                get_settings()
             time.sleep(self.interval)
 
 ################################################################################
