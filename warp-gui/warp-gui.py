@@ -43,6 +43,7 @@
 # HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #
 ################################################################################
+# To check the WARP connection: curl https://www.cloudflare.com/cdn-cgi/trace/
 
 # Import pip3 Module
 from tkinter import *
