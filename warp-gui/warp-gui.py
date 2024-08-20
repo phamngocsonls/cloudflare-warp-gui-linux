@@ -522,12 +522,17 @@ dnsf_label = [           'family', 'security', 'cloudflare-dns' ]
 
 warp_mode = 0
 warp_dnsf = 0
+warp_settings = ""
+warp_settings_cmdline = 'warp-cli settings | grep --color=never -e "^("'
 
 def get_settings():
-    global warp_mode, warp_dnsf
+    global warp_mode, warp_dnsf, warp_settings, warp_settings_cmdline
 
-    warp_settings = subprocess.getoutput("warp-cli settings")
+    retstr = subprocess.getoutput(warp_settings_cmdline)
+    if warp_settings == retstr:
+        return
 
+    warp_settings = retstr
     mode = warp_settings.find("Mode: ") + 6
     dnsf = warp_settings.find("Resolve via: ") + 13
     warp_mode_str = warp_settings[mode:].split()[0]
@@ -548,7 +553,9 @@ def get_settings():
 
 
 def settings_report():
-    settings_report_cmdline = 'warp-cli settings | grep --color=never -e "^("'
+    global warp_settings_cmdline
+
+    settings_report_cmdline = warp_settings_cmdline
     settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
     report_str = subprocess.getoutput(settings_report_cmdline)
     print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
