@@ -512,16 +512,38 @@ slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 ################################################################################
 
-warp_modes = ['warp', 'doh', 'warp+doh', 'dot', 'warp+dot', 'proxy', 'tunnel_only']
-dnsf_types = ['full', 'malware', 'off']
+warp_modes = ['unknown', 'warp', 'doh',          'warp+doh',
+       'dot',        'warp+dot',           'proxy',     'tunnel_only']
+warp_label = [           'Warp', 'DnsOverHttps', 'WarpWithDnsOverHttps',
+       'DnsOverTls', 'WarpWithDnsOverTls', 'WarpProxy', 'TunnelOnly' ]
+dnsf_types = ['unknown', 'full',   'malware',  'off']
+dnsf_label = [           'family', 'security', 'cloudflare-dns' ]
+
+warp_mode = 0
+warp_dnsf = 0
 
 def get_settings():
+    global warp_mode, warp_dnsf
+
     warp_settings = subprocess.getoutput("warp-cli settings")
+
     mode = warp_settings.find("Mode: ") + 6
     dnsf = warp_settings.find("Resolve via: ") + 13
     warp_mode_str = warp_settings[mode:].split()[0]
-    warp_dnsf_str = warp_settings[dnsf:].split()[0]
-    print("mode: ", warp_mode_str, "\ndnsf: ", warp_dnsf_str, "\n")
+    warp_dnsf_str = warp_settings[dnsf:].split()[0].split(".")[0]
+
+    try:
+        warp_mode = warp_label.index(warp_mode_str) + 1
+    except:
+        warp_mode = 0
+
+    try:
+        warp_dnsf = dnsf_label.index(warp_dnsf_str) + 1
+    except:
+        warp_dnsf = 0
+
+    print("mode: ", warp_mode_str, warp_mode, warp_modes[warp_mode],
+        "\ndnsf: ", warp_dnsf_str, warp_dnsf, dnsf_types[warp_dnsf], "\n")
 
 
 def settings_report():
