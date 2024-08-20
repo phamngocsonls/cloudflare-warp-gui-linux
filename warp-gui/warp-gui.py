@@ -55,6 +55,7 @@ import os
 import threading
 import ipinfo
 from tkinter import simpledialog
+from functools import partial
 from random import choice
 
 #enter access_token from ipinfo
@@ -264,6 +265,16 @@ def enroll():
     auto_update_guiview()
 
 
+def set_dns_filter(filter):
+    subprocess.getoutput("warp-cli dns families " + filter)
+
+
+def set_mode(mode):
+    global ipaddr
+    subprocess.getoutput("warp-cli mode " + mode)
+    ipaddr = ""
+
+
 # create root windows ##########################################################
 root = Tk()
 
@@ -271,11 +282,20 @@ bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 menubar.add_cascade(label="MENU",menu=helpmenu)
-helpmenu.add_command(label="Update or Install", command=update)
+helpmenu.add_command(label="Update or Install",   command=update)
 helpmenu.add_command(label="Install Certificate", command=install_cert)
 helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
+helpmenu.add_separator()
+helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
+helpmenu.add_command(label="DNS Filter: adults",  command=partial(set_dns_filter, "malware"))
+helpmenu.add_separator()
+helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
+helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
+helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
+helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel"))
+helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 
 #button
 logo_dir = dir_path + "/team-logo.png"
