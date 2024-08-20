@@ -66,7 +66,7 @@ Then use the menu to select your action to execute.
 
 This application allows to (dis)connect from both warp/team VPNs
 
-![four stages screenshots](warp-gui-4-steps.png)
+![four stages screenshots](warp-gui-5-steps.png)
 
 Icon on the taskbar changes with the connection status and the VPN type
 
