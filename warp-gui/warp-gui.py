@@ -222,11 +222,12 @@ def get_status():
 
 website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
-def get_ip():
+def get_ip(force=False):
     global website, ipaddr
 
-    if ipaddr != "":
-        return ipaddr
+    if force == False:
+        if ipaddr != "" and ipaddr[0] != "-":
+            return ipaddr
 
     try:
         ipdis = get('https://' + choice(website), timeout=(0.5,1.0)).text
