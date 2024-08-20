@@ -70,7 +70,13 @@ def install_cert():
     p.communicate()
 
 
+registration_new_cmdline = "warp-cli --accept-tos registration new"
+registration_new_cmdline +=" && warp-cli dns families malware"
+registration_new_cmdline +=" && warp-cli set-mode warp+doh"
+
 def update():
+    global registration_new_cmdline
+
     version = subprocess.getoutput("warp-cli --version")
     p = subprocess.Popen("curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg;echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; sudo apt update; sudo apt-get install cloudflare-warp -y; sudo apt-get install --only-upgrade cloudflare-warp -y",shell=True)
     p.communicate()
@@ -78,7 +84,7 @@ def update():
     new_version = subprocess.getoutput("warp-cli --version")
 
     if new_version != version: #TODO: why restarting the application?
-        subprocess.getoutput("yes yes | warp-cli --accept-tos registration new")
+        subprocess.getoutput(registration_new_cmdline)
         root.destroy()
         start_dir = "python3 " + dir_path + "/warp-gui.py"
         os.system(start_dir)
@@ -115,12 +121,12 @@ def registration_delete():
 
 
 def session_renew():
-    global status_old, update_thread_pause
+    global status_old, update_thread_pause, registration_new_cmdline
 
     oldval = status_old
-    cmdline = "warp-cli --accept-tos registration new"
+    cmdline = registration_new_cmdline
     if oldval == "UP":
-        cmdline = cmdline + " && warp-cli connect"
+        cmdline += " && warp-cli connect"
     update_thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
@@ -237,10 +243,12 @@ def get_ip():
 
 
 def enroll():
+    global registration_new_cmdline
+
     subprocess.getoutput("warp-cli disconnect")
     try:
         if acc_type == True or registration_missing() == True:
-            cmdline = "warp-cli --accept-tos registration new"
+            cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
         else:
