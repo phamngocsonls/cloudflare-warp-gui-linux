@@ -77,7 +77,7 @@ def update():
     new_version = subprocess.getoutput("warp-cli --version")
 
     if new_version != version:
-        subprocess.getoutput("yes yes | warp-cli registration new")
+        subprocess.getoutput("yes yes | warp-cli --accept-tos registration new")
         root.destroy()
         start_dir = "python3 " + dir_path + "/main.py"
         os.system(start_dir)
@@ -117,7 +117,7 @@ def session_renew():
     global status_old, update_thread_pause
 
     oldval = status_old
-    cmdline = "warp-cli registration new"
+    cmdline = "warp-cli --accept-tos registration new"
     if oldval == "UP":
         cmdline = cmdline + " && warp-cli connect"
     update_thread_pause = True
@@ -239,15 +239,15 @@ def enroll():
     subprocess.getoutput("warp-cli disconnect")
     try:
         if acc_type == True or registration_missing() == True:
-            cmdline = "warp-cli registration new"
+            cmdline = "warp-cli --accept-tos registration new"
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
                                       prompt="What's your Organization?:")
             if organization != "":
-                new_command = "yes yes | warp-cli teams-enroll " + organization
-                subprocess.getoutput(new_command)
+                new_command = "yes yes | warp-cli --accept-tos teams-enroll "
+                subprocess.getoutput(new_command + organization)
                 slogan.config(image = tmlogo)
     except:
         pass
@@ -399,7 +399,7 @@ def switch():
         status_old = "CN"
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
-        retstr = subprocess.getoutput("warp-cli connect")
+        retstr = subprocess.getoutput("warp-cli --accept-tos connect")
 
     status_label.update()
     auto_update_guiview()
