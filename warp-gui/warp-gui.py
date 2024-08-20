@@ -79,7 +79,7 @@ def update():
     if new_version != version:
         subprocess.getoutput("yes yes | warp-cli --accept-tos registration new")
         root.destroy()
-        start_dir = "python3 " + dir_path + "/main.py"
+        start_dir = "python3 " + dir_path + "/warp-gui.py"
         os.system(start_dir)
 
 
