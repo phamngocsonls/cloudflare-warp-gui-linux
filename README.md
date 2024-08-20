@@ -80,7 +80,7 @@ The project and the installation script are under the very permissive **3-clause
 BSD license**. While the python application is licensed under **GNU General Public
 License v2** because coding contributions are expected to be given back.
 
-Some images are strictly related with CloudFlare trademark and related services
+Some images are strictly related with **CloudFlare** trademark and related services
 and cannot be relicensed. However, because this GUI is strictly and exclusively
 related with `warp-cli` and their services, their integration within this project
 can be considered a fair-use as intended in trademark and copyright common laws.
