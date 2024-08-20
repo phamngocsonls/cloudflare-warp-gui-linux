@@ -77,7 +77,7 @@ def update():
     new_version = subprocess.getoutput("warp-cli --version")
 
     if new_version != version:
-        subprocess.getoutput("yes yes | warp-cli register")
+        subprocess.getoutput("yes yes | warp-cli registration new")
         root.destroy()
         start_dir = "python3 " + dir_path + "/main.py"
         os.system(start_dir)
