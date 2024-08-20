@@ -312,6 +312,11 @@ lbl_gui_ver = Label(root, text = "GUI v0.7.1", fg = "DimGray", bg = bgcolor,
 lbl_gui_ver.grid()
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
+lbl_setting = Label(root, text = "mode: - - - -\ndnsf: - - - -", fg = "Black",
+    bg = bgcolor, font =  ("Courier", 10), pady=10, padx=10, justify=LEFT)
+lbl_setting.grid()
+lbl_setting.place(relx=1.0, rely=1.0, anchor='se')
+
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
 acc_label.pack(pady = 0)
@@ -548,8 +553,9 @@ def get_settings():
     except:
         warp_dnsf = 0
 
-    print("mode: ", warp_mode_str, warp_mode, warp_modes[warp_mode],
-        "\ndnsf: ", warp_dnsf_str, warp_dnsf, dnsf_types[warp_dnsf], "\n")
+    lbl_setting.config(text = "mode:" + warp_modes[warp_mode].split("_")[0] +
+                            "\ndnsf:" + dnsf_types[warp_dnsf])
+    lbl_setting.update()
 
 
 def settings_report():
