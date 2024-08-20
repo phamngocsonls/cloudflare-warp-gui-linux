@@ -512,6 +512,25 @@ slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 ################################################################################
 
+warp_modes = ['warp', 'doh', 'warp+doh', 'dot', 'warp+dot', 'proxy', 'tunnel_only']
+dnsf_types = ['full', 'malware', 'off']
+
+def get_settings():
+    warp_settings = subprocess.getoutput("warp-cli settings")
+    mode = warp_settings.find("Mode: ") + 6
+    dnsf = warp_settings.find("Resolve via: ") + 13
+    warp_mode_str = warp_settings[mode:].split()[0]
+    warp_dnsf_str = warp_settings[dnsf:].split()[0]
+    print("mode: ", warp_mode_str, "\ndnsf: ", warp_dnsf_str, "\n")
+
+
+def settings_report():
+    settings_report_cmdline = 'warp-cli settings | grep --color=never -e "^("'
+    settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
+    report_str = subprocess.getoutput(settings_report_cmdline)
+    print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
+
+
 root.config(menu=menubar)
 root.tr = TestThreading()
 root.mainloop()
