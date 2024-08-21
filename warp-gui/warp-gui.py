@@ -275,6 +275,17 @@ def set_mode(mode):
     ipaddr = ""
 
 
+def service_taskbar():
+    cmdline = 'systemctl --user status warp-taskbar | sed -ne "s/Active: //p"'
+    retstr = subprocess.getoutput(cmdline)
+    if retstr.find("inactive") > -1:
+        cmdline = 'systemctl --user enable warp-taskbar;'
+        cmdline+=' systemctl --user start warp-taskbar'
+    else:
+        cmdline = 'systemctl --user disable warp-taskbar;'
+        cmdline+=' systemctl --user stop warp-taskbar'
+    retstr = subprocess.getoutput(cmdline)
+
 # create root windows ##########################################################
 root = Tk()
 
@@ -287,6 +298,7 @@ helpmenu.add_command(label="Install Certificate", command=install_cert)
 helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
+helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
 helpmenu.add_separator()
 helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
 helpmenu.add_command(label="DNS Filter: malware", command=partial(set_dns_filter, "malware"))
