@@ -43,6 +43,7 @@
 # HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #
 ################################################################################
+# To check the WARP connection: curl https://www.cloudflare.com/cdn-cgi/trace/
 
 # Import pip3 Module
 from tkinter import *
@@ -54,6 +55,7 @@ import os
 import threading
 import ipinfo
 from tkinter import simpledialog
+from functools import partial
 from random import choice
 
 #enter access_token from ipinfo
@@ -69,17 +71,23 @@ def install_cert():
     p.communicate()
 
 
+registration_new_cmdline = "warp-cli --accept-tos registration new"
+registration_new_cmdline +=" && warp-cli dns families malware"
+registration_new_cmdline +=" && warp-cli set-mode warp+doh"
+
 def update():
+    global registration_new_cmdline
+
     version = subprocess.getoutput("warp-cli --version")
     p = subprocess.Popen("curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg;echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; sudo apt update; sudo apt-get install cloudflare-warp -y; sudo apt-get install --only-upgrade cloudflare-warp -y",shell=True)
     p.communicate()
     time.sleep(3)
     new_version = subprocess.getoutput("warp-cli --version")
 
-    if new_version != version:
-        subprocess.getoutput("yes yes | warp-cli register")
+    if new_version != version: #TODO: why restarting the application?
+        subprocess.getoutput(registration_new_cmdline)
         root.destroy()
-        start_dir = "python3 " + dir_path + "/main.py"
+        start_dir = "python3 " + dir_path + "/warp-gui.py"
         os.system(start_dir)
 
 
@@ -114,12 +122,12 @@ def registration_delete():
 
 
 def session_renew():
-    global status_old, update_thread_pause
+    global status_old, update_thread_pause, registration_new_cmdline
 
     oldval = status_old
-    cmdline = "warp-cli registration new"
+    cmdline = registration_new_cmdline
     if oldval == "UP":
-        cmdline = cmdline + " && warp-cli connect"
+        cmdline += " && warp-cli connect"
     update_thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
@@ -215,16 +223,18 @@ def get_status():
 
 website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
-def get_ip():
+def get_ip(force=False):
     global website, ipaddr
 
-    if ipaddr != "":
-        return ipaddr
+    if force == False:
+        if ipaddr != "" and ipaddr[0] != '-':
+            return ipaddr
 
     try:
         ipdis = get('https://' + choice(website), timeout=(0.5,1.0)).text
     except Exception as e:
-        print("get ipaddr: ", str(e))
+        if False:
+            print("get ipaddr: ", str(e))
         return "-= error or timeout =-"
 
     try:
@@ -236,23 +246,49 @@ def get_ip():
 
 
 def enroll():
+    global registration_new_cmdline
+
     subprocess.getoutput("warp-cli disconnect")
     try:
         if acc_type == True or registration_missing() == True:
-            cmdline = "warp-cli registration new"
+            cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
                                       prompt="What's your Organization?:")
             if organization != "":
-                new_command = "yes yes | warp-cli teams-enroll " + organization
-                subprocess.getoutput(new_command)
+                new_command = "yes yes | warp-cli --accept-tos teams-enroll "
+                subprocess.getoutput(new_command + organization)
                 slogan.config(image = tmlogo)
     except:
         pass
     auto_update_guiview()
 
+
+def set_dns_filter(filter):
+    global warp_settings
+    subprocess.getoutput("warp-cli dns families " + filter)
+    warp_settings = ""
+
+
+def set_mode(mode):
+    global warp_settings
+    subprocess.getoutput("warp-cli mode " + mode)
+    warp_settings = ""
+    ipaddr_text_set()
+
+
+def service_taskbar():
+    cmdline = 'systemctl --user status warp-taskbar | sed -ne "s/Active: //p"'
+    retstr = subprocess.getoutput(cmdline)
+    if retstr.find("inactive") > -1:
+        cmdline = 'systemctl --user enable warp-taskbar;'
+        cmdline+=' systemctl --user start warp-taskbar'
+    else:
+        cmdline = 'systemctl --user disable warp-taskbar;'
+        cmdline+=' systemctl --user stop warp-taskbar'
+    retstr = subprocess.getoutput(cmdline)
 
 # create root windows ##########################################################
 root = Tk()
@@ -261,11 +297,21 @@ bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 menubar.add_cascade(label="MENU",menu=helpmenu)
-helpmenu.add_command(label="Update or Install", command=update)
+helpmenu.add_command(label="Update or Install",   command=update)
 helpmenu.add_command(label="Install Certificate", command=install_cert)
 helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
+helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
+helpmenu.add_separator()
+helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
+helpmenu.add_command(label="DNS Filter: malware", command=partial(set_dns_filter, "malware"))
+helpmenu.add_separator()
+helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
+helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
+helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
+helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
+helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 
 #button
 logo_dir = dir_path + "/team-logo.png"
@@ -297,10 +343,15 @@ root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
-lbl = Label(root, text = "GUI v0.7.1", fg = "DimGray", bg = bgcolor,
+lbl_gui_ver = Label(root, text = "GUI v0.7.3", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 12), pady=10, padx=10)
-lbl.grid()
-lbl.place(relx=0.0, rely=1.0, anchor='sw')
+lbl_gui_ver.grid()
+lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
+
+lbl_setting = Label(root, text = "mode: - - - -\ndnsf: - - - -", fg = "Black",
+    bg = bgcolor, font =  ("Courier", 10), pady=10, padx=10, justify=LEFT)
+lbl_setting.grid()
+lbl_setting.place(relx=1.0, rely=1.0, anchor='se')
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
@@ -316,8 +367,9 @@ warpver_label = Label(root, text = warp_version, fg = "DimGray",
 warpver_label.pack(pady = (0,10))
 
 #IP info
+ipaddr_tocheck_waitstr = "-=-.-=-.-=-.-=-"
 info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
-    font = ("Arial", 14), text = "-=-.-=-.-=-.-=-")
+    font = ("Arial", 14), text = ipaddr_tocheck_waitstr)
 info_label.pack(pady = (30,10))
 
 # Create A Button
@@ -381,12 +433,19 @@ def update_guiview(status, errlog=1):
     if status != "CN" and status != "DC":
         root.tr = threading.Thread(target=acc_info_update).start()
         root.tr = threading.Thread(target=change_ip_text).start()
+        root.tr = threading.Thread(target=get_settings).start()
         slide_update(status)
+
+
+def ipaddr_text_set(ipaddr=ipaddr_tocheck_waitstr):
+    ipaddr = ipaddr_tocheck_waitstr
+    info_label.config(text=ipaddr)
+    info_label.update()
 
 
 # Define our switch function
 def switch():
-    global status_old
+    global status_old, ipaddr, ipaddr_tocheck_waitstr
 
     on_button.config(state = DISABLED)
 
@@ -399,8 +458,9 @@ def switch():
         status_old = "CN"
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
-        retstr = subprocess.getoutput("warp-cli connect")
+        retstr = subprocess.getoutput("warp-cli --accept-tos connect")
 
+    ipaddr_text_set()
     status_label.update()
     auto_update_guiview()
 
@@ -470,7 +530,6 @@ def stats_label_update():
 class TestThreading(object):
 
     def __init__(self, interval=1):
-        self.status_oldval = ""
         self.interval = interval
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
@@ -482,9 +541,7 @@ class TestThreading(object):
                 status = get_status()
                 if status == "UP":
                     stats_label_update()
-                if self.status_oldval != status:
-                    self.status_oldval = status
-                    update_guiview(status, 0)
+                update_guiview(status, 0)
             time.sleep(self.interval)
 
 ################################################################################
@@ -502,6 +559,55 @@ else:
 slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
 
 ################################################################################
+
+warp_modes = ['unknown', 'warp', 'doh',          'warp+doh',
+       'dot',        'warp+dot',           'proxy',     'tunnel_only']
+warp_label = [           'Warp', 'DnsOverHttps', 'WarpWithDnsOverHttps',
+       'DnsOverTls', 'WarpWithDnsOverTls', 'WarpProxy', 'TunnelOnly' ]
+dnsf_types = ['unknown', 'full',   'malware',  'off']
+dnsf_label = [           'family', 'security', 'cloudflare-dns' ]
+
+warp_mode = 0
+warp_dnsf = 0
+warp_settings = ""
+warp_settings_cmdline = 'warp-cli settings | grep --color=never -e "^("'
+
+def get_settings():
+    global warp_mode, warp_dnsf, warp_settings, warp_settings_cmdline
+
+    retstr = subprocess.getoutput(warp_settings_cmdline)
+    if warp_settings == retstr:
+        return
+
+    warp_settings = retstr
+    mode = warp_settings.find("Mode: ") + 6
+    dnsf = warp_settings.find("Resolve via: ") + 13
+    warp_mode_str = warp_settings[mode:].split()[0]
+    warp_dnsf_str = warp_settings[dnsf:].split()[0].split(".")[0]
+
+    try:
+        warp_mode = warp_label.index(warp_mode_str) + 1
+    except:
+        warp_mode = 0
+
+    try:
+        warp_dnsf = dnsf_label.index(warp_dnsf_str) + 1
+    except:
+        warp_dnsf = 0
+
+    lbl_setting.config(text = "mode:" + warp_modes[warp_mode].split("_")[0] +
+                            "\ndnsf:" + dnsf_types[warp_dnsf])
+    lbl_setting.update()
+
+
+def settings_report():
+    global warp_settings_cmdline
+
+    settings_report_cmdline = warp_settings_cmdline
+    settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
+    report_str = subprocess.getoutput(settings_report_cmdline)
+    print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
+
 
 root.config(menu=menubar)
 root.tr = TestThreading()

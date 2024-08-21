@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo
 echo "Checking system requisites and dependencies..."
@@ -36,14 +36,25 @@ if ! which python3 | grep -q /usr/bin/python3; then
     err=1
 fi
 
-if ! apt-cache search python3-tk$ | grep -qe "^python3-tk "; then
+if ! which warp-cli >/dev/null; then
     echo
-    echo "WARNING: python3-tk package is not installed"
+    echo "WARNING: warp-cli is not in execution path"
     echo
-    echo "HOW2FIX: sudo apt-get install python3-tk -y"
+    echo "HOW2FIX: sudo apt-get install cloudflare-warp -y"
     echo
     err=1
 fi
+
+for i in python3-tk; do
+    if ! apt-cache search $i | grep -qe "^$i "; then
+        echo
+        echo "WARNING: $i package is not installed"
+        echo
+        echo "HOW2FIX: sudo apt-get install $i -y"
+        echo
+        err=1
+    fi
+done
 
 if ! which pip3 >/dev/null; then
     echo
@@ -81,6 +92,11 @@ cp -f $HOME/Desktop/warp-gui.desktop $HOME/.local/share/applications
 cp -f warp-gui/warp-gui.py $HOME/.local/bin/
 cp -f warp-gui/*.png $HOME/.local/bin
 chmod a+x $HOME/.local/bin/warp-gui.py
+
+echo "Disabling WARP taskbar applet..."
+echo
+systemctl --user disable warp-taskbar
+systemctl --user stop warp-taskbar
 
 echo "Installation done."
 echo
