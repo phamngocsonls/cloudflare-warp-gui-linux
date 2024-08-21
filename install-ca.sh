@@ -32,23 +32,25 @@ echo
 apt-get install ca-certificates -y
 
 # root access only clean tmp dir creation
-tmpdir=$(mktmp -d)
+tmpdir=$(mktemp -d)
 chmod go-rx ${tmpdir}
-rm -rf ${tmpdir}/
+rm -rf ${tmpdir}/*
 
 echo
-echo "Downloading Cloudflare_CA.pem..."
+echo "Downloading Cloudflare CA..."
 echo
 url_path='developers.cloudflare.com/cloudflare-one/static/documentation/connections'
-curl -s -o ${tmpdir}/Cloudflare_CA.pem https://$url_path/Cloudflare_CA.pem
-curl -s -o ${tmpdir}/cloudflare.crt https://$url_path/Cloudflare_CA.crt
+curl -fsSL https://$url_path/Cloudflare_CA.pem -o ${tmpdir}/Cloudflare_CA.pem \
+    && echo "loudflare_CA.pem - done."
+curl -fsSL https://$url_path/Cloudflare_CA.crt -o ${tmpdir}/cloudflare.crt \
+    && echo "cloudflare.crt - done."
 
 echo
 echo "Updating ca-certificate..."
 echo
 mkdir -p /usr/local/share/ca-certificates
 cp -f ${tmpdir}/Cloudflare_CA.pem /usr/local/share/ca-certificates/Cloudflare_CA.crt
-update-ca-certificate
+update-ca-certificates
 
 echo
 echo "Installing libnss3-tools..."
@@ -66,7 +68,8 @@ for i in $(grep '/home/.*sh' /etc/passwd | cut -d: -f1); do
         -i ${tmpdir}/cloudflare.crt
 done
 
-echo "CloudFlare certificates installed and update, done."
+rm -rf ${tmpdir}/
+echo "CloudFlare certificates installed or updated, done."
 echo
 
 fi #############################################################################
