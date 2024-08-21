@@ -267,7 +267,9 @@ def enroll():
 
 
 def set_dns_filter(filter):
+    global warp_settings
     subprocess.getoutput("warp-cli dns families " + filter)
+    warp_settings = ""
 
 
 def set_mode(mode):
