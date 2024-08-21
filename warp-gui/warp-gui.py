@@ -307,7 +307,7 @@ helpmenu.add_separator()
 helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
 helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
 helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
-helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel"))
+helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
 helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 
 #button
