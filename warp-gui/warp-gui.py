@@ -273,9 +273,10 @@ def set_dns_filter(filter):
 
 
 def set_mode(mode):
-    global ipaddr
+    global warp_settings
     subprocess.getoutput("warp-cli mode " + mode)
-    ipaddr = ""
+    warp_settings = ""
+    ipaddr_text_set()
 
 
 def service_taskbar():
