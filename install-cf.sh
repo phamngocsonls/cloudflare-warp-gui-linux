@@ -48,8 +48,8 @@ echo
 echo "Downloading CloudFlare pgp keyring..."
 echo
 mkdir -p --mode=0755 $kr_dpath/
-curl -fsSL $cf_pkgurl/cloudflare-main.gpg | gpg --yes --dearmor \
-    --output $kr_fname && echo "done."
+curl -fsSL $cf_pkgurl/cloudflare-main.gpg | gpg --yes --dearmor -o $kr_fname \
+    && echo "done."
 
 echo
 echo "Updating packages database..."
@@ -73,7 +73,7 @@ for i in cloudflare-warp; do
 done
 
 echo
-echo "done."
+echo "CloudFlare application installed or updated, done."
 echo
 
 fi; fi #########################################################################
