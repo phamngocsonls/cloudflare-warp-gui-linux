@@ -364,8 +364,9 @@ warpver_label = Label(root, text = warp_version, fg = "DimGray",
 warpver_label.pack(pady = (0,10))
 
 #IP info
+ipaddr_tocheck_waitstr = "-=-.-=-.-=-.-=-"
 info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
-    font = ("Arial", 14), text = "-=-.-=-.-=-.-=-")
+    font = ("Arial", 14), text = ipaddr_tocheck_waitstr)
 info_label.pack(pady = (30,10))
 
 # Create A Button
@@ -435,7 +436,7 @@ def update_guiview(status, errlog=1):
 
 # Define our switch function
 def switch():
-    global status_old
+    global status_old, ipaddr, ipaddr_tocheck_waitstr
 
     on_button.config(state = DISABLED)
 
@@ -449,6 +450,10 @@ def switch():
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli --accept-tos connect")
+
+    ipaddr = ipaddr_tocheck_waitstr
+    info_label.config(text=ipaddr)
+    info_label.update()
 
     status_label.update()
     auto_update_guiview()
