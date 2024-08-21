@@ -227,13 +227,14 @@ def get_ip(force=False):
     global website, ipaddr
 
     if force == False:
-        if ipaddr != "" and ipaddr[0] != "-":
+        if ipaddr != "" and ipaddr[0] != '-':
             return ipaddr
 
     try:
         ipdis = get('https://' + choice(website), timeout=(0.5,1.0)).text
     except Exception as e:
-        print("get ipaddr: ", str(e))
+        if False:
+            print("get ipaddr: ", str(e))
         return "-= error or timeout =-"
 
     try:
