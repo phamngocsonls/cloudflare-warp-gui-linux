@@ -321,7 +321,7 @@ root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
 lbl_gui_ver = Label(root, text = "GUI v0.7.4", fg = "DimGray", bg = bgcolor,
-    font = ("Arial", 12), pady=10, padx=10)
+    font = ("Arial", 11, 'bold'), pady=10, padx=10)
 lbl_gui_ver.grid()
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
