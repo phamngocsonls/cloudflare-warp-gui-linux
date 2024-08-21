@@ -434,6 +434,12 @@ def update_guiview(status, errlog=1):
         slide_update(status)
 
 
+def ipaddr_text_set(ipaddr=ipaddr_tocheck_waitstr):
+    ipaddr = ipaddr_tocheck_waitstr
+    info_label.config(text=ipaddr)
+    info_label.update()
+
+
 # Define our switch function
 def switch():
     global status_old, ipaddr, ipaddr_tocheck_waitstr
@@ -451,10 +457,7 @@ def switch():
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli --accept-tos connect")
 
-    ipaddr = ipaddr_tocheck_waitstr
-    info_label.config(text=ipaddr)
-    info_label.update()
-
+    ipaddr_text_set()
     status_label.update()
     auto_update_guiview()
 
