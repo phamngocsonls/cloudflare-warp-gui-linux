@@ -524,7 +524,6 @@ def stats_label_update():
 class TestThreading(object):
 
     def __init__(self, interval=1):
-        self.status_oldval = ""
         self.interval = interval
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
@@ -536,10 +535,7 @@ class TestThreading(object):
                 status = get_status()
                 if status == "UP":
                     stats_label_update()
-                if self.status_oldval != status:
-                    self.status_oldval = status
-                    update_guiview(status, 0)
-                get_settings()
+                update_guiview(status, 0)
             time.sleep(self.interval)
 
 ################################################################################
