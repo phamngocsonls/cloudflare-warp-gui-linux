@@ -65,31 +65,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
 
-
-def install_cert():
-    p = subprocess.Popen("sudo apt-get update; sudo apt-get install ca-certificates -y; curl -s -o /tmp/Cloudflare_CA.pem https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.pem; cp /tmp/Cloudflare_CA.pem /usr/local/share/ca-certificates/Cloudflare_CA.crt; sudo update-ca-certificate; sudo apt install libnss3-tools; curl -s -o /tmp/cloudflare.crt https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.crt; ls /home/ | awk '{print $1}' | xargs -i mkdir -p /home/{}/.pki/nssdb; ls /home/ | awk '{print $1}' | xargs -i certutil -d sql:/home/{}/.pki/nssdb -A -t 'C,,' -n 'Cloudflare-CA' -i /tmp/cloudflare.crt",shell=True)
-    p.communicate()
-
-
 registration_new_cmdline = "warp-cli --accept-tos registration new"
 registration_new_cmdline +=" && warp-cli dns families malware"
 registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
-def update():
-    global registration_new_cmdline
-
-    version = subprocess.getoutput("warp-cli --version")
-    p = subprocess.Popen("curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg;echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; sudo apt update; sudo apt-get install cloudflare-warp -y; sudo apt-get install --only-upgrade cloudflare-warp -y",shell=True)
-    p.communicate()
-    time.sleep(3)
-    new_version = subprocess.getoutput("warp-cli --version")
-
-    if new_version != version: #TODO: why restarting the application?
-        subprocess.getoutput(registration_new_cmdline)
-        root.destroy()
-        start_dir = "python3 " + dir_path + "/warp-gui.py"
-        os.system(start_dir)
-
+################################################################################
 
 def update_guiview_by_menu(err_str, info_str):
     global update_thread_pause
@@ -297,9 +277,6 @@ bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 menubar.add_cascade(label="MENU",menu=helpmenu)
-helpmenu.add_command(label="Update or Install",   command=update)
-helpmenu.add_command(label="Install Certificate", command=install_cert)
-helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
 helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
