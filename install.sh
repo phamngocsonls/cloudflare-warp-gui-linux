@@ -93,6 +93,11 @@ cp -f warp-gui/warp-gui.py $HOME/.local/bin/
 cp -f warp-gui/*.png $HOME/.local/bin
 chmod a+x $HOME/.local/bin/warp-gui.py
 
+echo "Disabling WARP taskbar applet..."
+echo
+systemctl --user disable warp-taskbar
+systemctl --user stop warp-taskbar
+
 echo "Installation done."
 echo
 
