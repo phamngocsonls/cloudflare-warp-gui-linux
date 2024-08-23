@@ -592,6 +592,12 @@ def settings_report():
     print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
 
 
+def set_settings(warp, dnsf):
+    global dnsf_types, warp_modes
+    set_dns_filter(dnsf_types[dnsf])
+    set_mode(warp_modes[warp])
+
+
 root.config(menu=menubar)
 root.tr = TestThreading()
 root.mainloop()
