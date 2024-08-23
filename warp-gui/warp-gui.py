@@ -96,6 +96,7 @@ def registration_delete():
 
     update_thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete")
+    ipaddr_text_set()
     status_old = "RGM"
 
     update_guiview_by_menu(err_str, "registration delete")
@@ -110,6 +111,7 @@ def session_renew():
     if oldval == "UP":
         cmdline += " && warp-cli connect"
 
+    ipaddr_text_set()
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
         status_old = "CN"
