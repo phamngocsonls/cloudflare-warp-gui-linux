@@ -106,6 +106,8 @@ def session_renew():
     global status_old, update_thread_pause, registration_new_cmdline
     update_thread_pause = True
 
+    if status_old == "":
+        get_status()
     oldval = status_old
     cmdline = registration_new_cmdline
     if oldval == "UP":
