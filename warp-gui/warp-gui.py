@@ -103,12 +103,13 @@ def registration_delete():
 
 def session_renew():
     global status_old, update_thread_pause, registration_new_cmdline
+    update_thread_pause = True
 
     oldval = status_old
     cmdline = registration_new_cmdline
     if oldval == "UP":
         cmdline += " && warp-cli connect"
-    update_thread_pause = True
+
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
         status_old = "CN"
