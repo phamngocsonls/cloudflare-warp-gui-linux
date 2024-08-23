@@ -104,11 +104,18 @@ def registration_delete():
 
 def session_renew():
     global status_old, update_thread_pause, registration_new_cmdline
+    global warp_mode, warp_dnsf
+
     update_thread_pause = True
 
+    if warp_mode == 0 or warp_dnsf == 0:
+        get_settings()
     if status_old == "":
         get_status()
+
     oldval = status_old
+    warp_mode_old = warp_mode
+    warp_dnsf_old = warp_dnsf
     cmdline = registration_new_cmdline
     if oldval == "UP":
         cmdline += " && warp-cli connect"
@@ -120,6 +127,7 @@ def session_renew():
     else:
         status_old = "DN"
 
+    set_settings(warp_mode_old, warp_dnsf_old)
     update_guiview_by_menu(err_str, "WARP session renew")
 
 
