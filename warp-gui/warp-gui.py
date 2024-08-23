@@ -203,7 +203,7 @@ def get_status():
 
 website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
-def get_ip(force=False):
+def get_ipaddr(force=False):
     global website, ipaddr
 
     if force == False:
@@ -376,7 +376,7 @@ def wait_status():
 def change_ip_text():
     global status_old
 
-    info_label.config(text = get_ip())
+    info_label.config(text = get_ipaddr())
     if status_old == "UP":
         info_label.config(fg = "MidNightBlue")
     else:
