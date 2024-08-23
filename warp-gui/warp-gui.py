@@ -551,6 +551,7 @@ warp_settings_cmdline = 'warp-cli settings | grep --color=never -e "^("'
 
 def get_settings():
     global warp_mode, warp_dnsf, warp_settings, warp_settings_cmdline
+    global dnsf_types, dnsf_label, warp_label, warp_modes
 
     retstr = subprocess.getoutput(warp_settings_cmdline)
     if warp_settings == retstr:
