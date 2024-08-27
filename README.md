@@ -93,10 +93,12 @@ can be considered a fair-use as intended in trademark and copyright common laws.
 ## Debian packaging
 
 Debian packages integrators are used to separate software libre from every other 
-"**contributes**" or "**non-free**" component. Because images used by this 
-application are possible subjected to some restrictions which are incompatible 
+"**contributes**" or "**non-free**" component. Because the images used by this 
+application, are possibly subjected to some restrictions which are incompatible 
 with the current "**main**" repository rules, another set of images has been 
-added. When the `orig`folder is missing, then the application fall back searching 
-images in `free` folder. Hence, removing the `orig` folder does not impair the 
+added.
+
+When the `orig`folder is missing, then the application falls back searching 
+images in the `free` folder. Hence, removing the `orig` folder does not impair the 
 functioning of the GUI but it changes its aesthetic, only.
 
