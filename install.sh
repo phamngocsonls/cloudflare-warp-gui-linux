@@ -97,8 +97,7 @@ sed -e "s,%HOME%,$HOME,g" warp-gui.desktop > $HOME/Desktop/warp-gui.desktop
 cp -f appicon.png $HOME/.local/share/icons/warp-gui-app.png
 cp -f $HOME/Desktop/warp-gui.desktop $HOME/.local/share/applications
 
-cp -f warp-gui/warp-gui.py $HOME/.local/bin/
-cp -f warp-gui/*.png $HOME/.local/bin
+cp -rf warp-gui/{free,orig,*.py} $HOME/.local/bin/
 chmod a+x $HOME/.local/bin/warp-gui.py
 
 echo "Disabling WARP taskbar applet..."
