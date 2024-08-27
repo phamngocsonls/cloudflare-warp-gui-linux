@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/bin/bash -e
+################################################################################
+#
+# Cloudflare WARP GUI for linux
+#
+# (C) 2022, Pham Ngoc Son <phamngocsonls@gmail.com> - Public Domain
+# (C) 2024, Roberto A. Foglietta <roberto.foglietta@gmail.com> - 3-clause BSD
+#
+################################################################################
 
 echo
 echo "Checking system requisites and dependencies..."

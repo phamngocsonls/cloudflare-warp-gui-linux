@@ -65,31 +65,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
 
-
-def install_cert():
-    p = subprocess.Popen("sudo apt-get update; sudo apt-get install ca-certificates -y; curl -s -o /tmp/Cloudflare_CA.pem https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.pem; cp /tmp/Cloudflare_CA.pem /usr/local/share/ca-certificates/Cloudflare_CA.crt; sudo update-ca-certificate; sudo apt install libnss3-tools; curl -s -o /tmp/cloudflare.crt https://developers.cloudflare.com/cloudflare-one/static/documentation/connections/Cloudflare_CA.crt; ls /home/ | awk '{print $1}' | xargs -i mkdir -p /home/{}/.pki/nssdb; ls /home/ | awk '{print $1}' | xargs -i certutil -d sql:/home/{}/.pki/nssdb -A -t 'C,,' -n 'Cloudflare-CA' -i /tmp/cloudflare.crt",shell=True)
-    p.communicate()
-
-
 registration_new_cmdline = "warp-cli --accept-tos registration new"
 registration_new_cmdline +=" && warp-cli dns families malware"
 registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
-def update():
-    global registration_new_cmdline
-
-    version = subprocess.getoutput("warp-cli --version")
-    p = subprocess.Popen("curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg;echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; sudo apt update; sudo apt-get install cloudflare-warp -y; sudo apt-get install --only-upgrade cloudflare-warp -y",shell=True)
-    p.communicate()
-    time.sleep(3)
-    new_version = subprocess.getoutput("warp-cli --version")
-
-    if new_version != version: #TODO: why restarting the application?
-        subprocess.getoutput(registration_new_cmdline)
-        root.destroy()
-        start_dir = "python3 " + dir_path + "/warp-gui.py"
-        os.system(start_dir)
-
+################################################################################
 
 def update_guiview_by_menu(err_str, info_str):
     global update_thread_pause
@@ -116,6 +96,7 @@ def registration_delete():
 
     update_thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete")
+    ipaddr_text_set()
     status_old = "RGM"
 
     update_guiview_by_menu(err_str, "registration delete")
@@ -123,18 +104,30 @@ def registration_delete():
 
 def session_renew():
     global status_old, update_thread_pause, registration_new_cmdline
+    global warp_mode, warp_dnsf
+
+    update_thread_pause = True
+
+    if warp_mode == 0 or warp_dnsf == 0:
+        get_settings()
+    if status_old == "":
+        get_status()
 
     oldval = status_old
+    warp_mode_old = warp_mode
+    warp_dnsf_old = warp_dnsf
     cmdline = registration_new_cmdline
     if oldval == "UP":
         cmdline += " && warp-cli connect"
-    update_thread_pause = True
+
+    ipaddr_text_set()
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
         status_old = "CN"
     else:
         status_old = "DN"
 
+    set_settings(warp_mode_old, warp_dnsf_old)
     update_guiview_by_menu(err_str, "WARP session renew")
 
 
@@ -223,7 +216,7 @@ def get_status():
 
 website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
-def get_ip(force=False):
+def get_ipaddr(force=False):
     global website, ipaddr
 
     if force == False:
@@ -297,9 +290,6 @@ bgcolor = "GainsBoro"
 menubar = Menu(root, bg = bgcolor)
 helpmenu = Menu(menubar,tearoff=0)
 menubar.add_cascade(label="MENU",menu=helpmenu)
-helpmenu.add_command(label="Update or Install",   command=update)
-helpmenu.add_command(label="Install Certificate", command=install_cert)
-helpmenu.add_separator()
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
 helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
@@ -343,8 +333,8 @@ root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
-lbl_gui_ver = Label(root, text = "GUI v0.7.3", fg = "DimGray", bg = bgcolor,
-    font = ("Arial", 12), pady=10, padx=10)
+lbl_gui_ver = Label(root, text = "GUI v0.7.5", fg = "DimGray", bg = bgcolor,
+    font = ("Arial", 11, 'bold'), pady=10, padx=10)
 lbl_gui_ver.grid()
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
@@ -399,7 +389,7 @@ def wait_status():
 def change_ip_text():
     global status_old
 
-    info_label.config(text = get_ip())
+    info_label.config(text = get_ipaddr())
     if status_old == "UP":
         info_label.config(fg = "MidNightBlue")
     else:
@@ -574,6 +564,7 @@ warp_settings_cmdline = 'warp-cli settings | grep --color=never -e "^("'
 
 def get_settings():
     global warp_mode, warp_dnsf, warp_settings, warp_settings_cmdline
+    global dnsf_types, dnsf_label, warp_label, warp_modes
 
     retstr = subprocess.getoutput(warp_settings_cmdline)
     if warp_settings == retstr:
@@ -607,6 +598,12 @@ def settings_report():
     settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
     report_str = subprocess.getoutput(settings_report_cmdline)
     print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
+
+
+def set_settings(warp, dnsf):
+    global dnsf_types, warp_modes
+    set_dns_filter(dnsf_types[dnsf])
+    set_mode(warp_modes[warp])
 
 
 root.config(menu=menubar)

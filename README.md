@@ -32,7 +32,9 @@ chmod a+x warp-gui/warp-gui.py
 Hence the installtion script is checks, copying and creating a desktop icon/link
 
 
-### Install script
+### Install scripts
+
+For instaling this application, there is a specific script:
 
 ```
 bash install.sh
@@ -45,20 +47,21 @@ running, using the mouse right button menu.
 
 ### Update GUI
 
-pull from git repository the code and install it again
+pull or download from git repository the code and install it again
 
 ----
 
-### Install or update warp-cli or add certificates
+### Install or update warp-cli and/or add certificates
 
-To install and update the `warp-cli` or add certificates, it requires the root
-privileges:
+To install and update the `warp-cli` or add certificates, it is required the
+root privileges and it can be used these two scripts:
 
 ```
-sudo python3 warp-gui/warp-gui.py
+sudo install-ca.sh
+sudo install-cf.sh
 ```
 
-Then use the menu to select your action to execute.
+Then you can install this application, if it was not installed yet.
 
 ----
 
