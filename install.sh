@@ -102,7 +102,11 @@ else
 fi
 cp -f $HOME/Desktop/warp-gui.desktop $HOME/.local/share/applications
 
-cp -rf warp-gui/{free,orig,*.py} $HOME/.local/bin/
+if [ -d orig/ ]; then
+    cp -rf warp-gui/{orig,*.py} $HOME/.local/bin/
+else
+    cp -rf warp-gui/{free,*.py} $HOME/.local/bin/
+fi
 chmod a+x $HOME/.local/bin/warp-gui.py
 
 echo "Disabling WARP taskbar applet..."
