@@ -67,9 +67,11 @@ Then you can install this application, if it was not installed yet.
 
 ### Screenshots
 
-This application allows to (dis)connect from both warp/team VPNs
+This application allows to dis/connect from both warp and zero-trust team VPNs:
 
 ![four stages screenshots](warp-gui-5-steps.png)
+
+Moreover, it allows to select the DNS filters and the WARP connection mode.
 
 Icon on the taskbar changes with the connection status and the VPN type:
 
