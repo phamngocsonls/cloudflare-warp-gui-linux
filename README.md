@@ -13,6 +13,7 @@ sudo apt-get install pip3 python3 python3-tk -y
 pip3 install ipinfo requests
 ```
 
+----
 
 ### Direct execution
 
@@ -31,8 +32,9 @@ chmod a+x warp-gui/warp-gui.py
 
 Hence the installtion script is checks, copying and creating a desktop icon/link
 
+----
 
-### Install scripts
+### Application install
 
 For instaling this application, there is a specific script:
 
@@ -42,6 +44,20 @@ bash install.sh
 
 Then search for **CloudFlare** icon on the desktop and enable it for 
 running, using the mouse right button menu.
+
+----
+
+### Tarball packaging
+
+You may wish to install this application on different system without the burden 
+of dealing with all the stuff from the repository. In this case:
+
+```
+bash make-tarball.sh [--free]
+```
+
+It creates a files archive with the CloudFlare images set or the alternative 
+images set.
 
 ----
 
