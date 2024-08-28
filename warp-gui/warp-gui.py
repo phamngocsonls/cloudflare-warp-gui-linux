@@ -303,27 +303,53 @@ helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "war
 helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
 helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 
-#button
-logo_dir = dir_path + "/team-logo.png"
-on_dir = dir_path + "/slide-on.png"
-off_dir = dir_path + "/slide-off.png"
-cflogo_dir = dir_path + "/warp-logo.png"
-tmlogo = PhotoImage(file = logo_dir)
-appicon_path = dir_path + "/appicon-init.png"
-appicon_init = PhotoImage(file = appicon_path)
-appicon_path = dir_path + "/appicon-pass.png"
-appicon_pass = PhotoImage(file = appicon_path)
-appicon_path = dir_path + "/appicon-warp.png"
-appicon_warp = PhotoImage(file = appicon_path)
-appicon_path = dir_path + "/appicon-team.png"
-appicon_team = PhotoImage(file = appicon_path)
-tmlogo = tmlogo.subsample(10)
+on_dir = dir_path + "/free/slide-on.png"
 on = PhotoImage(file = on_dir)
-on = on.subsample(3)
+
+off_dir = dir_path + "/free/slide-off.png"
 off = PhotoImage(file = off_dir)
-off = off.subsample(3)
-cflogo = PhotoImage(file = cflogo_dir)
-cflogo = cflogo.subsample(2)
+
+try:
+    logo_dir = dir_path + "/orig/team-logo.png"
+    tmlogo = PhotoImage(file = logo_dir)
+except:
+    logo_dir = dir_path + "/free/team-letter.png"
+    tmlogo = PhotoImage(file = logo_dir)
+
+try:
+    cflogo_dir = dir_path + "/orig/warp-logo.png"
+    cflogo = PhotoImage(file = cflogo_dir)
+except:
+    cflogo_dir = dir_path + "/free/warp-letter.png"
+    cflogo = PhotoImage(file = cflogo_dir)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-init.png"
+    appicon_init = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-init.png"
+    appicon_init = PhotoImage(file = appicon_path)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-pass.png"
+    appicon_pass = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-pass.png"
+    appicon_pass = PhotoImage(file = appicon_path)   
+
+try:
+    appicon_path = dir_path + "/orig/appicon-warp.png"
+    appicon_warp = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-warp.png"
+    appicon_warp = PhotoImage(file = appicon_path)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-team.png"
+    appicon_team = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-team.png"
+    appicon_team = PhotoImage(file = appicon_path)
 
 # root window title and dimension
 root.title("WARP GUI")
@@ -333,7 +359,7 @@ root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
-lbl_gui_ver = Label(root, text = "GUI v0.7.5", fg = "DimGray", bg = bgcolor,
+lbl_gui_ver = Label(root, text = "GUI v0.7.8", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 11, 'bold'), pady=10, padx=10)
 lbl_gui_ver.grid()
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
