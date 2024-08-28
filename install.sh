@@ -94,7 +94,12 @@ mkdir -p $HOME/.local/share/icons/
 mkdir -p $HOME/.local/bin/
 
 sed -e "s,%HOME%,$HOME,g" warp-gui.desktop > $HOME/Desktop/warp-gui.desktop
-cp -f appicon.png $HOME/.local/share/icons/warp-gui-app.png
+
+if [ -r appicon.png ]; then
+    cp -f appicon.png $HOME/.local/share/icons/warp-gui-app.png
+else
+    cp -f appclue.png $HOME/.local/share/icons/warp-gui-app.png
+fi
 cp -f $HOME/Desktop/warp-gui.desktop $HOME/.local/share/applications
 
 cp -rf warp-gui/{free,orig,*.py} $HOME/.local/bin/
