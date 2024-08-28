@@ -71,9 +71,11 @@ This application allows to (dis)connect from both warp/team VPNs
 
 ![four stages screenshots](warp-gui-5-steps.png)
 
-Icon on the taskbar changes with the connection status and the VPN type
+Icon on the taskbar changes with the connection status and the VPN type:
 
-<p><div align="center"><img src="warp-gui-4-icons.png" width="50%" height="50%" alt="four status icons"></div></p>
+![two icons sets screenshots](warp-gui-8-icons.png)
+
+There are two sets of icons: the second one is for Debian integration in "main".
 
 ----
 
