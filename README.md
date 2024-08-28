@@ -77,7 +77,7 @@ Icon on the taskbar changes with the connection status and the VPN type:
 
 ![two icons sets screenshots](warp-gui-8-icons.png)
 
-There are two sets of icons: the second one is for Debian integration in "main".
+There are two sets of icons: the second one is for Debian integration in "*main*" repository.
 
 ----
 
@@ -97,9 +97,9 @@ can be considered a fair-use as intended in trademark and copyright common laws.
 ## Debian packaging
 
 Debian packages integrators are used to separate software libre from every other 
-"**contributes**" or "**non-free**" component. Because the images used by this 
+"*contributes*" or "*non-free*" component. Because the images used by this 
 application, are possibly subjected to some restrictions which are incompatible 
-with the current "**main**" repository rules, another set of images has been 
+with the current "*main*" repository rules, another set of images has been 
 added.
 
 When the `orig`folder is missing, then the application falls back searching 
