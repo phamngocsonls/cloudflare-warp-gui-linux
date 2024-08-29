@@ -95,6 +95,11 @@ mkdir -p $HOME/.local/bin/
 
 sed -e "s,%HOME%,$HOME,g" warp-gui.desktop > $HOME/Desktop/warp-gui.desktop
 
+if [ -r $HOME/.local/share/icons/warp-gui-app.png ]; then
+    # RAF: useful to trigger the image cache cleaning
+    rm -f $HOME/.local/share/icons/warp-gui-app.png
+fi
+
 if [ -r appicon.png ]; then
     cp -f appicon.png $HOME/.local/share/icons/warp-gui-app.png
 else
