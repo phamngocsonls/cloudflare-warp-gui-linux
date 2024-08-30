@@ -1,4 +1,12 @@
 #!/bin/bash
+#!/bin/bash -e
+################################################################################
+#
+# Cloudflare WARP GUI for linux
+#
+# (C) 2024, Roberto A. Foglietta <roberto.foglietta@gmail.com> - 3-clause BSD
+#
+################################################################################
 
 function basename() {
     echo "$@" | rev | cut -d/ -f1 | rev
