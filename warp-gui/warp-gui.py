@@ -130,13 +130,14 @@ def session_renew():
     set_settings(warp_mode_old, warp_dnsf_old)
     update_guiview_by_menu(err_str, "WARP session renew")
 
+acc_type = ""
 
 def get_acc_type():
+    global acc_type
+
     account = subprocess.getoutput("warp-cli registration show")
-    return (account.find("Team") > -1)
-
-
-acc_type = ""
+    acc_type = (account.find("Team") > -1)
+    return acc_type
 regstr_missng = False
 
 def acc_info_update():
@@ -626,6 +627,8 @@ def set_settings(warp, dnsf):
     global dnsf_types, warp_modes
     set_dns_filter(dnsf_types[dnsf])
     set_mode(warp_modes[warp])
+
+################################################################################
 
 root.config(menu=menubar)
 root.tr = TestThreading()
