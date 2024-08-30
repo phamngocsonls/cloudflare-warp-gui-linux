@@ -284,24 +284,9 @@ def service_taskbar():
     retstr = subprocess.getoutput(cmdline)
 
 # create root windows ##########################################################
-root = Tk()
 
 bgcolor = "GainsBoro"
-menubar = Menu(root, bg = bgcolor)
-helpmenu = Menu(menubar,tearoff=0)
-menubar.add_cascade(label="MENU",menu=helpmenu)
-helpmenu.add_command(label="Registration Delete", command=registration_delete)
-helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
-helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
-helpmenu.add_separator()
-helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
-helpmenu.add_command(label="DNS Filter: malware", command=partial(set_dns_filter, "malware"))
-helpmenu.add_separator()
-helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
-helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
-helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
-helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
-helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
+root = Tk()
 
 on_dir = dir_path + "/free/slide-on.png"
 on = PhotoImage(file = on_dir)
@@ -360,6 +345,22 @@ root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
 
+menubar = Menu(root, bg = bgcolor, activeborderwidth = 4)
+helpmenu = Menu(menubar, tearoff=1, relief=RAISED, font = "Arial 11")
+menubar.add_cascade(label="MENU",menu=helpmenu)
+
+helpmenu.add_command(label="Registration Delete", command=registration_delete)
+helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
+helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
+helpmenu.add_separator()
+helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
+helpmenu.add_command(label="DNS Filter: malware", command=partial(set_dns_filter, "malware"))
+helpmenu.add_separator()
+helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
+helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
+helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
+helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
+helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
@@ -630,7 +631,6 @@ def set_settings(warp, dnsf):
     global dnsf_types, warp_modes
     set_dns_filter(dnsf_types[dnsf])
     set_mode(warp_modes[warp])
-
 
 root.config(menu=menubar)
 root.tr = TestThreading()
