@@ -137,9 +137,10 @@ def get_acc_type():
 
 
 acc_type = ""
+regstr_missng = False
 
 def acc_info_update():
-    global acc_type
+    global acc_type, regstr_missng
 
     acc_type = get_acc_type()
 
@@ -157,7 +158,7 @@ def acc_info_update():
             root.iconphoto(False,appicon_pass)
     acc_label.update()
 
-    if registration_missing() == True:
+    if regstr_missng == True:
         slogan.config(image = cflogo)
     elif acc_type == True:
         slogan.config(image = cflogo)
@@ -168,13 +169,6 @@ def acc_info_update():
 
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
-
-
-regstr_missng = False
-
-def registration_missing():
-    global regstr_missng
-    return regstr_missng
 
 
 ipaddr = ""
@@ -239,11 +233,11 @@ def get_ipaddr(force=False):
 
 
 def enroll():
-    global registration_new_cmdline
+    global registration_new_cmdline, regstr_missng
 
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if acc_type == True or registration_missing() == True:
+        if acc_type == True or regstr_missng == True:
             cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
@@ -343,7 +337,6 @@ root.geometry('360x480')
 root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
-
 
 menubar = Menu(root, bg = bgcolor, activeborderwidth = 4)
 helpmenu = Menu(menubar, tearoff=1, relief=RAISED, font = "Arial 11")
@@ -563,7 +556,7 @@ lbl_gui_ver = Label(frame, text = "GUI v0.7.8", fg = "DimGray", bg = bgcolor,
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
 slogan = Button(frame, image = "", command=enroll)
-if registration_missing() == True:
+if regstr_missng == True:
     slogan.config(image = cflogo)
 elif acc_type == True:
     slogan.config(image = cflogo)
