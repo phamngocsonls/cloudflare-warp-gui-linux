@@ -169,6 +169,19 @@ def acc_info_update():
     slogan.update()
 
 
+def status_icon_update(status=status_old, zerotrust=acc_type):
+    if zerotrust == True:
+        if status == "UP":
+            root.iconphoto(False,appicon_team)
+        else:
+            root.iconphoto(False,appicon_pass)
+    else:
+        if status == "UP":
+            root.iconphoto(False,appicon_warp)
+        else:
+            root.iconphoto(False,appicon_pass)
+
+
 def cf_info():
     return subprocess.getoutput("warp-cli --version")
 
@@ -544,9 +557,13 @@ class TestThreading(object):
         while True:
             if update_thread_pause == False:
                 status = get_status()
-                if status == "UP":
-                    stats_label_update()
-                update_guiview(status, 0)
+                if root.focus_get() != None or root.attributes('-topmost') == 1:
+                    if status == "UP":
+                        stats_label_update()
+                    update_guiview(status, 0)
+                else:
+                    status_icon_update(status, get_acc_type())
+
             time.sleep(self.interval)
 
 ################################################################################
