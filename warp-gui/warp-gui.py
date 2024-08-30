@@ -91,6 +91,8 @@ def update_guiview_by_menu(err_str, info_str):
     update_thread_pause = False
 
 
+status_old = ""
+
 def registration_delete():
     global status_old, update_thread_pause
 
@@ -138,22 +140,21 @@ def get_acc_type():
     account = subprocess.getoutput("warp-cli registration show")
     acc_type = (account.find("Team") > -1)
     return acc_type
-regstr_missng = False
 
 def acc_info_update():
-    global acc_type, status_old, regstr_missng
+    global status_old
+    status = status_old
+    zerotrust = get_acc_type()
 
-    acc_type = get_acc_type()
-
-    if acc_type == True:
+    if zerotrust == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
-        if status_old == "UP":
+        if status == "UP":
             root.iconphoto(False,appicon_team)
         else:
             root.iconphoto(False,appicon_pass)
     else:
         acc_label.config(text = "WARP", fg = "Tomato")
-        if status_old == "UP":
+        if status == "UP":
             root.iconphoto(False,appicon_warp)
         else:
             root.iconphoto(False,appicon_pass)
@@ -161,7 +162,7 @@ def acc_info_update():
 
     if regstr_missng == True:
         slogan.config(image = cflogo)
-    elif acc_type == True:
+    elif zerotrust == True:
         slogan.config(image = cflogo)
     else:
         slogan.config(image = tmlogo)
@@ -174,7 +175,6 @@ def cf_info():
 
 ipaddr = ""
 status_err = ""
-status_old = ""
 
 def get_status():
     global status_err, regstr_missng, status_old, ipaddr
