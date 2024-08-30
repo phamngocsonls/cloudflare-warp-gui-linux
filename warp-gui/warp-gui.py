@@ -399,13 +399,7 @@ def wait_status():
 
 
 def change_ip_text():
-    global status_old
-
-    info_label.config(text = get_ipaddr())
-    if status_old == "UP":
-        info_label.config(fg = "MidNightBlue")
-    else:
-        info_label.config(fg = "DimGray")
+    ipaddr_text_set(get_ipaddr())
     on_button.config(state = NORMAL)
     info_label.update()
 
@@ -439,15 +433,22 @@ def update_guiview(status, errlog=1):
         slide_update(status)
 
 
-def ipaddr_text_set(ipaddr=ipaddr_tocheck_waitstr):
-    ipaddr = ipaddr_tocheck_waitstr
-    info_label.config(text=ipaddr)
+def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
+    global status_old
+
+    if ipaddr_text == ipaddr_tocheck_waitstr:
+        info_label.config(fg = "DimGray")
+    if status_old != "UP":
+        info_label.config(fg = "DimGray")
+    else:
+        info_label.config(fg = "MidNightBlue")
+    info_label.config(text = ipaddr_text)
     info_label.update()
 
 
 # Define our switch function
 def switch():
-    global status_old, ipaddr, ipaddr_tocheck_waitstr
+    global status_old
 
     on_button.config(state = DISABLED)
 
