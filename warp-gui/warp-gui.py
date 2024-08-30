@@ -71,6 +71,8 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
+update_thread_pause = False
+
 def update_guiview_by_menu(err_str, info_str):
     global update_thread_pause
 
@@ -88,8 +90,6 @@ def update_guiview_by_menu(err_str, info_str):
     update_guiview(get_status(), 0)
     update_thread_pause = False
 
-
-update_thread_pause = False
 
 def registration_delete():
     global status_old, update_thread_pause
@@ -140,7 +140,7 @@ acc_type = ""
 regstr_missng = False
 
 def acc_info_update():
-    global acc_type, regstr_missng
+    global acc_type, status_old, regstr_missng
 
     acc_type = get_acc_type()
 
@@ -233,7 +233,7 @@ def get_ipaddr(force=False):
 
 
 def enroll():
-    global registration_new_cmdline, regstr_missng
+    global registration_new_cmdline, acc_type, regstr_missng
 
     subprocess.getoutput("warp-cli disconnect")
     try:
@@ -538,6 +538,7 @@ class TestThreading(object):
         thread.start()
 
     def run(self,acc_label):
+        global update_thread_pause
         while True:
             if update_thread_pause == False:
                 status = get_status()
