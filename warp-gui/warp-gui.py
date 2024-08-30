@@ -359,15 +359,7 @@ root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
 
-lbl_gui_ver = Label(root, text = "GUI v0.7.8", fg = "DimGray", bg = bgcolor,
-    font = ("Arial", 11, 'bold'), pady=10, padx=10)
-lbl_gui_ver.grid()
-lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
-lbl_setting = Label(root, text = "mode: - - - -\ndnsf: - - - -", fg = "Black",
-    bg = bgcolor, font =  ("Courier", 10), pady=10, padx=10, justify=LEFT)
-lbl_setting.grid()
-lbl_setting.place(relx=1.0, rely=1.0, anchor='se')
 
 #Acc info
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
@@ -563,7 +555,11 @@ class TestThreading(object):
 ################################################################################
 
 frame = Frame(root, bg = bgcolor)
-frame.pack(side=BOTTOM)
+frame.pack(side=BOTTOM, fill=X)
+
+lbl_gui_ver = Label(frame, text = "GUI v0.7.8", fg = "DimGray", bg = bgcolor,
+    font = ("Arial", 11, 'bold'), pady=10, padx=10)
+lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
 slogan = Button(frame, image = "", command=enroll)
 if registration_missing() == True:
@@ -573,6 +569,10 @@ elif acc_type == True:
 else:
     slogan.config(image = tmlogo)
 slogan.pack(side=BOTTOM, pady=10, padx=(10,10))
+
+lbl_setting = Label(frame, text = "mode: - - - -\ndnsf: - - - -", fg = "Black",
+    bg = bgcolor, font =  ("Courier", 10), pady=10, padx=10, justify=LEFT)
+lbl_setting.place(relx=1.0, rely=1.0, anchor='se')
 
 ################################################################################
 
