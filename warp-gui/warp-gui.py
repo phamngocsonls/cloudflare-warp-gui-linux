@@ -532,7 +532,8 @@ def stats_label_update():
         warp_stats = old_warp_stats
     elif warp_stats != old_warp_stats:
         old_warp_stats = warp_stats
-        wsl = warp_stats.splitlines()
+        wsl = warp_stats.replace(';',' ')
+        wsl = wsl.splitlines()
         wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
         stats_label.config(text = wsl, fg = "MidNightBlue")
         stats_label.update_idletasks()
