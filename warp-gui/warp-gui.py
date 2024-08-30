@@ -85,7 +85,7 @@ def update_guiview_by_menu(err_str, info_str):
             err_str = "\n".join(err_str)
 
     stats_label.config(text = err_str, fg = "OrangeRed")
-    stats_label.update()
+    stats_label.update_idletasks()
 
     update_guiview(get_status(), 0)
     update_thread_pause = False
@@ -158,7 +158,7 @@ def acc_info_update():
             root.iconphoto(False,appicon_warp)
         else:
             root.iconphoto(False,appicon_pass)
-    acc_label.update()
+    acc_label.update_idletasks()
 
     if regstr_missng == True:
         slogan.config(image = cflogo)
@@ -166,7 +166,7 @@ def acc_info_update():
         slogan.config(image = cflogo)
     else:
         slogan.config(image = tmlogo)
-    slogan.update()
+    slogan.update_idletasks()
 
 
 def status_icon_update(status=status_old, zerotrust=acc_type):
@@ -415,7 +415,7 @@ def wait_status():
 def change_ip_text():
     ipaddr_text_set(get_ipaddr())
     on_button.config(state = NORMAL)
-    info_label.update()
+    info_label.update_idletasks()
 
 
 def auto_update_guiview(errlog=1):
@@ -437,8 +437,8 @@ def update_guiview(status, errlog=1):
         if errlog and stats_err == 0:
             stats_label.config(fg = "DimGray")
 
-    on_button.update()
-    stats_label.update()
+    on_button.update_idletasks()
+    stats_label.update_idletasks()
 
     if status != "CN" and status != "DC":
         root.tr = threading.Thread(target=acc_info_update).start()
@@ -457,7 +457,7 @@ def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
     else:
         info_label.config(fg = "MidNightBlue")
     info_label.config(text = ipaddr_text)
-    info_label.update()
+    info_label.update_idletasks()
 
 
 # Define our switch function
@@ -476,9 +476,9 @@ def switch():
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli --accept-tos connect")
+    status_label.update_idletasks()
 
     ipaddr_text_set()
-    status_label.update()
     auto_update_guiview()
 
 ################################################################################
@@ -523,8 +523,8 @@ def slide_update(status):
         change = 0
 
     if change:
-        on_button.update()
-        status_label.update()
+        on_button.update_idletasks()
+        status_label.update_idletasks()
 
 
 old_warp_stats = warp_stats = ""
@@ -541,7 +541,7 @@ def stats_label_update():
         wsl = warp_stats.splitlines()
         wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
         stats_label.config(text = wsl, fg = "MidNightBlue")
-        stats_label.update()
+        stats_label.update_idletasks()
 
 
 class TestThreading(object):
@@ -628,7 +628,7 @@ def get_settings():
 
     lbl_setting.config(text = "mode:" + warp_modes[warp_mode].split("_")[0] +
                             "\ndnsf:" + dnsf_types[warp_dnsf])
-    lbl_setting.update()
+    lbl_setting.update_idletasks()
 
 
 def settings_report():
@@ -649,4 +649,5 @@ def set_settings(warp, dnsf):
 
 root.config(menu=menubar)
 root.tr = TestThreading()
+root.update_idletasks()
 root.mainloop()
