@@ -338,10 +338,9 @@ except:
     appicon_path = dir_path + "/free/appclou-team.png"
     appicon_team = PhotoImage(file = appicon_path)
 
-# root window title and dimension
+# root window background color, title, dimension and position
 root.title("WARP GUI")
-# Set geometry (widthxheight)
-root.geometry('360x480')
+root.geometry("360x480+120+90")
 root.resizable(False,False)
 root.iconphoto(True,appicon_init)
 root.config(bg = bgcolor)
