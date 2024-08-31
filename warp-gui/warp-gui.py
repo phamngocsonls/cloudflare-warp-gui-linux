@@ -71,112 +71,10 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
-def update_guiview_by_menu(err_str, info_str):
-    if err_str != "":
-        err_str = err_str.split("\n")
-        if err_str[0] == "Success":
-            err_str = err_str[0] + ": " + info_str
-        else:
-            err_str = err_str[0].split(".")
-            err_str = "\n".join(err_str)
-
-    stats_label.config(text = err_str, fg = "OrangeRed")
-    stats_label.update_idletasks()
-
-    update_guiview(get_status(), 0)
-    TestThreading.thread_pause = False
-
-
-status_old = ""
-
-def registration_delete():
-    TestThreading.thread_pause = True
-    err_str = subprocess.getoutput("warp-cli registration delete")
-    ipaddr_text_set()
-    status_old = "RGM"
-    update_guiview_by_menu(err_str, "registration delete")
-
-
-def session_renew():
-    global status_old, registration_new_cmdline
-    global warp_mode, warp_dnsf
-
-    TestThreading.thread_pause = True
-
-    if warp_mode == 0 or warp_dnsf == 0:
-        get_settings()
-    if status_old == "":
-        get_status()
-
-    oldval = status_old
-    warp_mode_old = warp_mode
-    warp_dnsf_old = warp_dnsf
-    cmdline = registration_new_cmdline
-    if oldval == "UP":
-        cmdline += " && warp-cli connect"
-
-    ipaddr_text_set()
-    err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
-    if oldval == "UP":
-        status_old = "CN"
-    else:
-        status_old = "DN"
-
-    set_settings(warp_mode_old, warp_dnsf_old)
-    update_guiview_by_menu(err_str, "WARP session renew")
-
-acc_type = ""
-
-def get_acc_type():
-    global acc_type
-
-    account = subprocess.getoutput("warp-cli registration show")
-    acc_type = (account.find("Team") > -1)
-    return acc_type
-
-def acc_info_update():
-    global status_old
-    status = status_old
-    zerotrust = get_acc_type()
-
-    if zerotrust == True:
-        acc_label.config(text = "Zero Trust", fg = "Blue")
-    else:
-        acc_label.config(text = "WARP", fg = "Tomato")
-    acc_label.update_idletasks()
-
-    if regstr_missng == True:
-        slogan.config(image = cflogo)
-    elif zerotrust == True:
-        slogan.config(image = cflogo)
-    else:
-        slogan.config(image = tmlogo)
-    slogan.update_idletasks()
-
-    status_icon_update(status, zerotrust)
-
-def status_icon_update(status=status_old, zerotrust=acc_type):
-    if zerotrust == True:
-        if status == "UP":
-            root.iconphoto(False,appicon_team)
-        else:
-            root.iconphoto(False,appicon_pass)
-    else:
-        if status == "UP":
-            root.iconphoto(False,appicon_warp)
-        else:
-            root.iconphoto(False,appicon_pass)
-    root.update_idletasks()
-
-
-def cf_info():
-    return subprocess.getoutput("warp-cli --version")
-
-
 status_err = ""
 
 def get_status():
-    global status_err, regstr_missng, status_old
+    global status_err, regstr_missng
 
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
@@ -201,11 +99,112 @@ def get_status():
     else:
         status = "ERR"
 
-    if status != status_old:
+    if status != get_status.old:
         get_ipaddr.text = ""
-        status_old = status
+        get_status.old = status
 
     return status
+
+get_status.old = ""
+
+
+def update_guiview_by_menu(err_str, info_str):
+    if err_str != "":
+        err_str = err_str.split("\n")
+        if err_str[0] == "Success":
+            err_str = err_str[0] + ": " + info_str
+        else:
+            err_str = err_str[0].split(".")
+            err_str = "\n".join(err_str)
+
+    stats_label.config(text = err_str, fg = "OrangeRed")
+    stats_label.update_idletasks()
+
+    update_guiview(get_status(), 0)
+    TestThreading.thread_pause = False
+
+
+def registration_delete():
+    TestThreading.thread_pause = True
+    err_str = subprocess.getoutput("warp-cli registration delete")
+    ipaddr_text_set()
+    get_status.old = "RGM"
+    update_guiview_by_menu(err_str, "registration delete")
+
+
+def session_renew():
+    global registration_new_cmdline
+    global warp_mode, warp_dnsf
+
+    TestThreading.thread_pause = True
+
+    if warp_mode == 0 or warp_dnsf == 0:
+        get_settings()
+    if get_status.old == "":
+        get_status()
+
+    oldval = get_status.old
+    warp_mode_old = warp_mode
+    warp_dnsf_old = warp_dnsf
+    cmdline = registration_new_cmdline
+    if oldval == "UP":
+        cmdline += " && warp-cli connect"
+
+    ipaddr_text_set()
+    err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
+    if oldval == "UP":
+        get_status.old = "CN"
+    else:
+        get_status.old = "DN"
+
+    set_settings(warp_mode_old, warp_dnsf_old)
+    update_guiview_by_menu(err_str, "WARP session renew")
+
+acc_type = ""
+
+def get_acc_type():
+    global acc_type
+
+    account = subprocess.getoutput("warp-cli registration show")
+    acc_type = (account.find("Team") > -1)
+    return acc_type
+
+def acc_info_update():
+    status = get_status.old
+    zerotrust = get_acc_type()
+
+    if zerotrust == True:
+        acc_label.config(text = "Zero Trust", fg = "Blue")
+    else:
+        acc_label.config(text = "WARP", fg = "Tomato")
+    acc_label.update_idletasks()
+
+    if regstr_missng == True:
+        slogan.config(image = cflogo)
+    elif zerotrust == True:
+        slogan.config(image = cflogo)
+    else:
+        slogan.config(image = tmlogo)
+    slogan.update_idletasks()
+
+    status_icon_update(status, zerotrust)
+
+def status_icon_update(status=get_status.old, zerotrust=acc_type):
+    if zerotrust == True:
+        if status == "UP":
+            root.iconphoto(False,appicon_team)
+        else:
+            root.iconphoto(False,appicon_pass)
+    else:
+        if status == "UP":
+            root.iconphoto(False,appicon_warp)
+        else:
+            root.iconphoto(False,appicon_pass)
+    root.update_idletasks()
+
+
+def cf_info():
+    return subprocess.getoutput("warp-cli --version")
 
 
 def get_ipaddr(force=False):
@@ -435,11 +434,9 @@ def update_guiview(status, errlog=1):
 
 
 def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
-    global status_old
-
     if ipaddr_text == ipaddr_tocheck_waitstr:
         info_label.config(fg = "DimGray")
-    if status_old != "UP":
+    if get_status.old != "UP":
         info_label.config(fg = "DimGray")
     else:
         info_label.config(fg = "MidNightBlue")
@@ -449,18 +446,16 @@ def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
 
 # Define our switch function
 def switch():
-    global status_old
-
     on_button.config(state = DISABLED)
     on_button.update_idletasks()
 
-    if status_old == "UP":
-        status_old = "DC"
+    if get_status.old == "UP":
+        get_status.old = "DC"
         status_label.config(text = "Disconnecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli disconnect")
-    elif status_old == "DN":
-        status_old = "CN"
+    elif get_status.old == "DN":
+        get_status.old = "CN"
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli --accept-tos connect")
