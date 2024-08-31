@@ -457,6 +457,10 @@ def auto_update_guiview(errlog=1):
 
 
 def update_guiview(status, errlog=1):
+    if update_guiview.inrun:
+        return
+    update_guiview.inrun = 1
+
     stats_err = 0
     if errlog and get_status.err != "":
         stats_label.config(text = get_status.err, fg = "OrangeRed")
@@ -477,6 +481,11 @@ def update_guiview(status, errlog=1):
         root.tr = threading.Thread(target=change_ip_text).start()
         root.tr = threading.Thread(target=get_settings).start()
         slide_update(status)
+
+    time.sleep(0.1)
+    update_guiview.inrun = 0
+
+update_guiview.inrun = 0
 
 
 def ipaddr_text_set(ipaddr_text=ipaddr_searching):
@@ -556,9 +565,13 @@ def slide_update(status):
 
 
 def stats_label_update():
+    if stats_label_update.inrun:
+        return
+    stats_label_update.inrun = 1
+
     warp_stats = subprocess.getoutput("warp-cli tunnel stats")
     if warp_stats == "":
-        return
+        pass
     elif warp_stats != stats_label_update.warp_stats_last:
         stats_label_update.warp_stats_last = warp_stats
         wsl = warp_stats.replace(';',' ')
@@ -567,7 +580,10 @@ def stats_label_update():
         stats_label.config(text = wsl, fg = "MidNightBlue")
         stats_label.update_idletasks()
 
+    stats_label_update.inrun = 0
+
 stats_label_update.warp_stats_last = ""
+stats_label_update.inrun = 0
 
 
 class TestThreading(object):
