@@ -67,6 +67,42 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
+import requests
+import socket
+
+def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
+    weburl = weburl.split('/',1)
+    if ipv6:
+        # Resolve to an IPv6 address only (family=socket.AF_INET6)
+        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET6,
+            timeout=(0.8,1.0))
+        # Construct the URL using the IPv6 address
+        # IPv6 addresses should be enclosed in []
+        ip_address = ip_info[0][4][0]
+        url = f"http://[{ip_address}]/"
+    else:
+        # Resolve to an IPv4 address only (family=socket.AF_INET)
+        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET)
+        # Construct the URL using the IPv4 address
+        ip_address = ip_info[0][4][0]
+        url = f"http://{ip_address}/"
+    url+= weburl[1]
+
+    if get_ipaddr.dbg:
+        print("inet_get_ipaddr:", url)
+
+    # Send the GET request with the Host header set to the original domain
+    res = requests.get(url, headers={"Host": weburl[0]}, timeout=(0.8,1.0))
+    return res.text.split('\n',1)[0] if res.status_code == 200 else ""
+
+def ipv4_get_ipaddr(url="ifconfig.me"):
+    return inet_get_ipaddr(url, 0)
+
+def ipv6_get_ipaddr(url="ifconfig.me"):
+    return inet_get_ipaddr(url, 1)
+
+################################################################################
+
 def inrun_wait(func, wait=0):
     if wait > 0:
         time.sleep(wait)
@@ -249,8 +285,7 @@ def get_ipaddr(force=False):
     get_ipaddr.tries += 1
 
     try:
-        get_ipaddr.ipv4 = get('http://' + choice(get_ipaddr.website),
-            timeout=(0.8,1.0)).text.replace("\n","")
+        get_ipaddr.ipv4 = ipv4_get_ipaddr(choice(get_ipaddr.website))
     except Exception as e:
         if get_ipaddr.tries > 1:
             root.after(3, force_get_ipaddr)
