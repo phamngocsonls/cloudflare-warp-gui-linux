@@ -173,11 +173,10 @@ def cf_info():
     return subprocess.getoutput("warp-cli --version")
 
 
-ipaddr = ""
 status_err = ""
 
 def get_status():
-    global status_err, regstr_missng, status_old, ipaddr
+    global status_err, regstr_missng, status_old
 
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
@@ -203,35 +202,35 @@ def get_status():
         status = "ERR"
 
     if status != status_old:
-        ipaddr = ""
+        get_ipaddr.text = ""
         status_old = status
 
     return status
 
 
 def get_ipaddr(force=False):
-    global ipaddr
-
     if force == False:
-        if ipaddr != "" and ipaddr[0] != '-':
-            return ipaddr
+        if get_ipaddr.text != "" and get_ipaddr.text[0] != '-':
+            return get_ipaddr.text
 
     try:
         ipdis = get('https://' + choice(get_ipaddr.website), timeout=(0.5,1.0))
-        ipaddr = ipdis.text
     except Exception as e:
-        if False:
+        if get_ipaddr.dbg:
             print("get ipaddr: ", str(e))
         return "-= error or timeout =-"
 
     try:
-        country = handler.getDetails(ipaddr, timeout=(0.5,1.0)).country
-        ipaddr += " (" + country + ")"
+        country = handler.getDetails(ipdis.text, timeout=(0.5,1.0)).country
+        country = " (" + country + ")"
     except:
-        pass
-    return ipaddr
+        country = ""
+    get_ipaddr.text = ipdis.text + country
+    return get_ipaddr.text
 
 get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
+get_ipaddr.text = ""
+get_ipaddr.dbg = 0
 
 
 def enroll():
