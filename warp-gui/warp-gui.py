@@ -250,7 +250,7 @@ def get_ipaddr(force=False):
 
     try:
         get_ipaddr.ipv4 = get('http://' + choice(get_ipaddr.website),
-            timeout=(0.5,1.0)).text.replace("\n","")
+            timeout=(0.8,1.0)).text.replace("\n","")
     except Exception as e:
         if get_ipaddr.tries > 1:
             root.after(3, force_get_ipaddr)
@@ -304,7 +304,7 @@ def get_country_city(ipaddr):
 
     try:
         # using the access_token from ipinfo
-        details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.5,1.0))
+        details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.8,1.0))
         strn = details.city + " (" + details.country + ")"
         get_country_city.dict[ipaddr] = strn
         if get_country_city.dict_reset > 0:
