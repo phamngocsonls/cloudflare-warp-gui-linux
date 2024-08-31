@@ -74,8 +74,7 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
     weburl = weburl.split('/',1)
     if ipv6:
         # Resolve to an IPv6 address only (family=socket.AF_INET6)
-        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET6,
-            timeout=(0.8,1.0))
+        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET6)
         # Construct the URL using the IPv6 address
         # IPv6 addresses should be enclosed in []
         ip_address = ip_info[0][4][0]
@@ -89,7 +88,7 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
     url+= weburl[1]
 
     if get_ipaddr.dbg:
-        print("inet_get_ipaddr:", url)
+        print("inet_get_ipaddr:", weburl[0], " + ", weburl[1], " = ", url)
 
     # Send the GET request with the Host header set to the original domain
     res = requests.get(url, headers={"Host": weburl[0]}, timeout=(0.8,1.0))
@@ -284,27 +283,51 @@ def get_ipaddr(force=False):
             get_ipaddr.text.replace("\n", " "))
     get_ipaddr.tries += 1
 
+    url4 = choice(get_ipaddr.wurl4)
+    url6 = choice(get_ipaddr.wurl6)
+    if get_ipaddr.dbg:
+        print("urls:", url4, url6)
+    ipv4 = ipv6 = ""
     try:
-        get_ipaddr.ipv4 = ipv4_get_ipaddr(choice(get_ipaddr.website))
+        ipv4 = ipv4_get_ipaddr(url4)
+        get_ipaddr.ipv4 = ipv4
     except Exception as e:
+        if get_ipaddr.dbg:
+            print("ERR> get ipv4(try, exception):", get_ipaddr.tries, str(e))
+        get_ipaddr.ipv4 = ""
+    try:
+        ipv6 = ipv6_get_ipaddr(url6)
+        get_ipaddr.ipv6 = ipv6
+    except Exception as e:
+        if get_ipaddr.dbg:
+            print("ERR>  get ipv6(try, exception):", get_ipaddr.tries, str(e))
+        get_ipaddr.ipv6 = ""
+
+    if ipv4 + ipv6 == "":
         if get_ipaddr.tries > 1:
             root.after(3, force_get_ipaddr)
-        if get_ipaddr.dbg:
-            print("get ipaddr(try, exception):", get_ipaddr.tries, str(e))
         get_ipaddr.inrun = 0
-        return "\n" + ipaddr_errstring
+        #eturn "\n" + ipaddr_errstring
+        return ipaddr_errstring
 
     country_city = get_country_city(get_ipaddr.ipv4)
-    get_ipaddr.text = country_city + "\n" + get_ipaddr.ipv4
+    if country_city == "" and get_ipaddr.tries > 1:
+        root.after(3, force_get_ipaddr)
+
+    #get_ipaddr.text = country_city + "\n" + ipv4 + "\n" + ipv6
+    get_ipaddr.text = ipv4 + " - " + country_city + "\n" \
+        + (ipv6 if ipv6 else "~o~o:o~o~:~o~o:o~::~o:o~")
     if get_ipaddr.dbg:
-        print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
+        print("get_ipaddr(try, ipstr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
+
     get_ipaddr.inrun = 0
     return get_ipaddr.text
 
 get_ipaddr.hadler_token = ""
 get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
-get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text', 'ip4.me/ip/']
+get_ipaddr.wurl4 = ['ifconfig.me/ip', 'api.ipify.org/',  'ip4.me/ip/']
+get_ipaddr.wurl6 = ['ifconfig.me/ip', 'api6.ipify.org/', 'ip6only.me/ip/']
 get_ipaddr.inrun = 0
 get_ipaddr.text = ""
 get_ipaddr.ipv4 = ""
@@ -488,7 +511,7 @@ warpver_label.pack(pady = (0,10))
 
 #IP info
 ipaddr_searching = "\n-=-.-=-.-=-.-=-"
-ipaddr_errstring = "-= error or timeout =-"
+ipaddr_errstring = "\n-= error or timeout =-"
 ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
     font = ("Arial", 14), text = ipaddr_searching)
 ipaddr_label.pack(pady = (20,10))
@@ -773,12 +796,11 @@ def set_settings(warp, dnsf):
 
 network_has_ipv6 = urllib3.util.connection.HAS_IPV6
 # This line can enable or disable the IPv6 for 'requests' methods
-urllib3.util.connection.HAS_IPV6 = False
-if urllib3.util.connection.HAS_IPV6:
-    get_ipaddr.website =[x.replace("ip4", "ip6") for x in get_ipaddr.website]
+urllib3.util.connection.HAS_IPV6 = True
 
 print("\nrun.py path", dir_path,
-      "\nipaddr urls", ", ".join(get_ipaddr.website),
+      "\nipaddr url4", ", ".join(get_ipaddr.wurl4),
+      "\nipaddr url6", ", ".join(get_ipaddr.wurl6),
       "\nnetwork has", ("IPv6" if network_has_ipv6 else "IPv4"),
        ("" if urllib3.util.connection.HAS_IPV6 else "disabled"),
       "\n")
