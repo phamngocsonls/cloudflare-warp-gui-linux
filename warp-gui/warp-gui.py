@@ -515,7 +515,6 @@ def switch():
 on_button.config(command = switch, state = DISABLED)
 on_button.pack(pady = 0)
 
-root.tr = threading.Thread(target=change_ip_text).start()
 
 # Create Label
 status_label = Label(root, text = "", fg = "Black", bg = bgcolor, font = ("Arial", 15))
