@@ -18,7 +18,10 @@ exclopts='--exclude warp-gui-[0-9]-\*.png'
 exclopts+=" --exclude $scriptname"
 exclopts+=" --exclude $filename"
 exclopts+=" --exclude README.md"
+exclopts+=' --exclude \*\.patch'
 exclopts+=' --exclude \*\.[0-9]'
+exclopts+=' --exclude \*\.orig'
+exclopts+=' --exclude \*\.rej'
 exclopts+=' --exclude test\*'
 
 if [ "x$1" == "xfree" -o "x$1" == "x--free" ]; then
