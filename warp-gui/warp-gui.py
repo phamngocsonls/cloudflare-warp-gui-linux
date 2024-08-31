@@ -71,11 +71,20 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
-def get_status():
+def inrun_wait(func, wait=0):
+    if wait > 0:
+        time.sleep(wait)
+    elif func.inrun:
+        while func.inrun:
+            time.sleep(0.1)
+    return 1
+
+def get_status(wait=0):
+    get_status.inrun = inrun_wait(get_status, wait)
+
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
-        time.sleep(0.5)
-        return get_status()
+        return get_status(0.5)
     status = status.split("\n")[0]
     status_err = status.split(".")
     get_status.err = "\n".join(status_err)
@@ -99,11 +108,13 @@ def get_status():
         get_ipaddr.text = ""
         get_status.last = status
 
+    get_status.inrun = 0
     return status
 
 get_status.last = ""
 get_status.err = ""
 get_status.reg = True
+get_status.inrun = 0
 
 
 def update_guiview_by_menu(err_str, info_str):
@@ -160,12 +171,16 @@ def session_renew():
 
 
 def get_access():
+    get_access.inrun = inrun_wait(get_access)
+
     account = subprocess.getoutput("warp-cli registration show")
     get_access.last = (account.find("Team") > -1)
+
+    get_access.inrun = 0
     return get_access.last
 
-
 get_access.last = ""
+get_access.inrun = 0
 
 def acc_info_update():
     status = get_status.last
