@@ -179,6 +179,7 @@ def get_access():
 get_access.last = ""
 get_access.inrun = 0
 
+
 def acc_info_update():
     status = get_status.last
     zerotrust = get_access()
@@ -551,8 +552,6 @@ slide_switch.inrun = 0
 on_button.config(command = slide_switch, state = DISABLED)
 on_button.pack(pady = 0)
 
-
-# Create Label
 status_label = Label(root, text = "", fg = "Black", bg = bgcolor, font = ("Arial", 15))
 status_label.pack(padx=0, pady=(0,10))
 
