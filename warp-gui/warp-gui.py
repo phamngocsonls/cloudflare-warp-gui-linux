@@ -223,8 +223,6 @@ def force_get_ipaddr():
     get_ipaddr(True)
 
 
-urllib3.util.connection.HAS_IPV6 = False
-
 def get_ipaddr(force=False):
     global ipaddr_searching, ipaddr_errstring
 
@@ -238,7 +236,9 @@ def get_ipaddr(force=False):
         get_ipaddr.tries = 0
     elif get_ipaddr.text == "\n" and get_ipaddr.tries < 2:
         pass
-    elif get_ipaddr.tries < 2 and get_ipaddr.text.find("::") > 0:
+    elif get_ipaddr.tries < 2 \
+    and urllib3.util.connection.HAS_IPV6 \
+    and get_ipaddr.text.find("::") > 0:
         get_ipaddr.inrun = 0
         return get_ipaddr.text
     elif get_ipaddr.tries > 0:
@@ -275,6 +275,7 @@ get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text', 'ip4.me/ip
 get_ipaddr.inrun = 0
 get_ipaddr.text = ""
 get_ipaddr.ipv4 = ""
+get_ipaddr.ipv6 = ""
 get_ipaddr.tries = 0
 get_ipaddr.dbg = 0
 
@@ -719,6 +720,12 @@ def set_settings(warp, dnsf):
     set_mode(warp_modes[warp])
 
 ################################################################################
+
+network_has_ipv6 = urllib3.util.connection.HAS_IPV6
+# This line can enable or disable the IPv6 for 'requests' methods
+urllib3.util.connection.HAS_IPV6 = False
+if urllib3.util.connection.HAS_IPV6:
+    get_ipaddr.website =[x.replace("ip4", "ip6") for x in get_ipaddr.website]
 
 root.config(menu=menubar)
 root.tr = TestThreading()
