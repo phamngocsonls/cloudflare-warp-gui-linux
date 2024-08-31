@@ -367,10 +367,10 @@ warpver_label = Label(root, text = warp_version, fg = "DimGray",
 warpver_label.pack(pady = (0,10))
 
 #IP info
-ipaddr_tocheck_waitstr = "-=-.-=-.-=-.-=-"
-info_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
-    font = ("Arial", 14), text = ipaddr_tocheck_waitstr)
-info_label.pack(pady = (30,10))
+ipaddr_searching = "-=-.-=-.-=-.-=-"
+ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
+    font = ("Arial", 14), text = ipaddr_searching)
+ipaddr_label.pack(pady = (30,10))
 
 # Create A Button
 on_button = Button(root, image = off, bd = 0, 
@@ -378,7 +378,7 @@ on_button = Button(root, image = off, bd = 0,
 if get_status() == "UP":
     on_button.config(image = on)
 else:
-    info_label.config(fg = "DimGray")
+    ipaddr_label.config(fg = "DimGray")
 
 root.tr = threading.Thread(target=acc_info_update).start()
 
@@ -399,7 +399,7 @@ def wait_status():
 def change_ip_text():
     ipaddr_text_set(get_ipaddr())
     on_button.config(state = NORMAL)
-    info_label.update_idletasks()
+    ipaddr_label.update_idletasks()
     on_button.update_idletasks()
 
 
@@ -430,15 +430,15 @@ def update_guiview(status, errlog=1):
         slide_update(status)
 
 
-def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
-    if ipaddr_text == ipaddr_tocheck_waitstr:
-        info_label.config(fg = "DimGray")
+def ipaddr_text_set(ipaddr_text=ipaddr_searching):
+    if ipaddr_text == ipaddr_searching:
+        ipaddr_label.config(fg = "DimGray")
     if get_status.last != "UP":
-        info_label.config(fg = "DimGray")
+        ipaddr_label.config(fg = "DimGray")
     else:
-        info_label.config(fg = "MidNightBlue")
-    info_label.config(text = ipaddr_text)
-    info_label.update_idletasks()
+        ipaddr_label.config(fg = "MidNightBlue")
+    ipaddr_label.config(text = ipaddr_text)
+    ipaddr_label.update_idletasks()
 
 
 # Define our switch function
