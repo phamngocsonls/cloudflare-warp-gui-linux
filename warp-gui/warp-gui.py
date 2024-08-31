@@ -552,7 +552,12 @@ class TestThreading(object):
         while True:
             if update_thread_pause == False:
                 status = get_status()
-                if root.focus_get() != None or root.attributes('-topmost') == 1:
+                try:
+                    top = root.attributes('-topmost')
+                    top |= (root.focus_get() != None)
+                except:
+                    top = 1
+                if top == 1:
                     if status == "UP":
                         stats_label_update()
                     update_guiview(status, 0)
