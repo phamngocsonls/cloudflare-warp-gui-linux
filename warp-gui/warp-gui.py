@@ -173,6 +173,7 @@ def status_icon_update(status=status_old, zerotrust=acc_type):
             root.iconphoto(False,appicon_warp)
         else:
             root.iconphoto(False,appicon_pass)
+    root.update_idletasks()
 
 
 def cf_info():
