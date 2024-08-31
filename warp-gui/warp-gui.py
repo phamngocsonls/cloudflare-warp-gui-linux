@@ -555,7 +555,9 @@ class TestThreading(object):
                     update_guiview(status, 0)
                 else:
                     status_icon_update(status, get_acc_type())
-            time.sleep(self.interval)
+                time.sleep(self.interval)
+            else:
+                time.sleep(self.interval/2)
 
 ################################################################################
 
