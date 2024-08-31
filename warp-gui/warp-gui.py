@@ -61,8 +61,6 @@ from random import choice
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-print(dir_path)
-
 registration_new_cmdline = "warp-cli --accept-tos registration new"
 registration_new_cmdline +=" && warp-cli dns families malware"
 registration_new_cmdline +=" && warp-cli set-mode warp+doh"
@@ -726,6 +724,12 @@ network_has_ipv6 = urllib3.util.connection.HAS_IPV6
 urllib3.util.connection.HAS_IPV6 = False
 if urllib3.util.connection.HAS_IPV6:
     get_ipaddr.website =[x.replace("ip4", "ip6") for x in get_ipaddr.website]
+
+print("\nrun.py path", dir_path,
+      "\nipaddr urls", ", ".join(get_ipaddr.website),
+      "\nnetwork has", ("IPv6" if network_has_ipv6 else "IPv4"),
+       ("" if urllib3.util.connection.HAS_IPV6 else "disabled"),
+      "\n")
 
 root.config(menu=menubar)
 root.tr = TestThreading()
