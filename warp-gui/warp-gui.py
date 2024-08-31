@@ -71,10 +71,8 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
-status_err = ""
-
 def get_status():
-    global status_err, regstr_missng
+    global regstr_missng
 
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
@@ -82,7 +80,7 @@ def get_status():
         return get_status()
     status = status.split("\n")[0]
     status_err = status.split(".")
-    status_err = "\n".join(status_err)
+    get_status.err = "\n".join(status_err)
 
     if status.find("Disconnected") > -1:
         regstr_missng = False
@@ -106,6 +104,7 @@ def get_status():
     return status
 
 get_status.old = ""
+get_status.err = ""
 
 
 def update_guiview_by_menu(err_str, info_str):
@@ -409,11 +408,9 @@ def auto_update_guiview(errlog=1):
 
 
 def update_guiview(status, errlog=1):
-    global status_err
-
     stats_err = 0
-    if errlog and status_err != "":
-        stats_label.config(text = status_err, fg = "OrangeRed")
+    if errlog and get_status.err != "":
+        stats_label.config(text = get_status.err, fg = "OrangeRed")
         stats_err = 1
 
     if status == "UP":
