@@ -140,18 +140,17 @@ def registration_delete():
 
 def session_renew():
     global registration_new_cmdline
-    global warp_mode, warp_dnsf
 
     TestThreading.thread_pause = True
 
-    if warp_mode == 0 or warp_dnsf == 0:
+    if get_settings.warp_mode == 0 or get_settings.warp_dnsf == 0:
         get_settings()
     if get_status.last == "":
         get_status()
 
     oldval = get_status.last
-    warp_mode_old = warp_mode
-    warp_dnsf_old = warp_dnsf
+    warp_mode_old = get_settings.warp_mode
+    warp_dnsf_old = get_settings.warp_dnsf
     cmdline = registration_new_cmdline
     if oldval == "UP":
         cmdline += " && warp-cli connect"
@@ -302,15 +301,13 @@ def enroll():
 
 
 def set_dns_filter(filter):
-    global warp_settings
     subprocess.getoutput("warp-cli dns families " + filter)
-    warp_settings = ""
+    get_settings.warp_settings = ""
 
 
 def set_mode(mode):
-    global warp_settings
     subprocess.getoutput("warp-cli mode " + mode)
-    warp_settings = ""
+    get_settings.warp_settings = ""
     ipaddr_text_set()
 
 
@@ -646,44 +643,42 @@ warp_label = [           'Warp', 'DnsOverHttps', 'WarpWithDnsOverHttps',
 dnsf_types = ['unknown', 'full',   'malware',  'off']
 dnsf_label = [           'family', 'security', 'cloudflare-dns' ]
 
-warp_mode = 0
-warp_dnsf = 0
-warp_settings = ""
-warp_settings_cmdline = 'warp-cli settings | grep --color=never -e "^("'
-
 def get_settings():
-    global warp_mode, warp_dnsf, warp_settings, warp_settings_cmdline
     global dnsf_types, dnsf_label, warp_label, warp_modes
 
-    retstr = subprocess.getoutput(warp_settings_cmdline)
-    if warp_settings == retstr:
+    retstr = subprocess.getoutput(get_settings.warp_cmdline)
+    if get_settings.warp_settings == retstr:
         return
 
-    warp_settings = retstr
-    mode = warp_settings.find("Mode: ") + 6
-    dnsf = warp_settings.find("Resolve via: ") + 13
-    warp_mode_str = warp_settings[mode:].split()[0]
-    warp_dnsf_str = warp_settings[dnsf:].split()[0].split(".")[0]
+    mode = retstr.find("Mode: ") + 6
+    dnsf = retstr.find("Resolve via: ") + 13
+    warp_mode_str = retstr[mode:].split()[0]
+    warp_dnsf_str = retstr[dnsf:].split()[0].split(".")[0]
+    get_settings.warp_settings = retstr
+    
+    try:
+        get_settings.warp_mode = warp_label.index(warp_mode_str) + 1
+    except:
+        get_settings.warp_mode = 0
 
     try:
-        warp_mode = warp_label.index(warp_mode_str) + 1
+        get_settings.warp_dnsf = dnsf_label.index(warp_dnsf_str) + 1
     except:
-        warp_mode = 0
+        get_settings.warp_dnsf = 0
 
-    try:
-        warp_dnsf = dnsf_label.index(warp_dnsf_str) + 1
-    except:
-        warp_dnsf = 0
-
-    lbl_setting.config(text = "mode:" + warp_modes[warp_mode].split("_")[0] +
-                            "\ndnsf:" + dnsf_types[warp_dnsf])
+    warp_str = warp_modes[get_settings.warp_mode].split("_")[0]
+    dnsf_str = dnsf_types[get_settings.warp_dnsf]
+    lbl_setting.config(text = "mode:" + warp_str +  "\ndnsf:" + dnsf_str)
     lbl_setting.update_idletasks()
+
+get_settings.warp_mode = 0
+get_settings.warp_dnsf = 0
+get_settings.warp_settings = ""
+get_settings.warp_cmdline = 'warp-cli settings | grep --color=never -e "^("'
 
 
 def settings_report():
-    global warp_settings_cmdline
-
-    settings_report_cmdline = warp_settings_cmdline
+    settings_report_cmdline = get_settings.warp_cmdline
     settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
     report_str = subprocess.getoutput(settings_report_cmdline)
     print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
