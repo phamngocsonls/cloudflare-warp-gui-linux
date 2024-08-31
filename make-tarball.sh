@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash -e
 ################################################################################
 #
 # Cloudflare WARP GUI for linux
@@ -32,9 +31,6 @@ else
     echo "use option --free for Debian, instead"
     echo
 fi
-
-#echo "exclopts: $exclopts"
-#echo
 
 eval tar cvzf $filename $exclopts  *
 echo
