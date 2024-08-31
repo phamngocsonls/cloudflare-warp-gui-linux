@@ -72,8 +72,6 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 ################################################################################
 
 def get_status():
-    global regstr_missng
-
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
         time.sleep(0.5)
@@ -83,16 +81,16 @@ def get_status():
     get_status.err = "\n".join(status_err)
 
     if status.find("Disconnected") > -1:
-        regstr_missng = False
+        get_status.reg = False
         status = "DN"
     elif status.find("Connected") > -1:
-        regstr_missng = False
+        get_status.reg = False
         status = "UP"
     elif status.find("Connecting") > -1:
-        regstr_missng = False
+        get_status.reg = False
         status = "CN"
     elif status.find("Registration Missing") > -1:
-        regstr_missng = True
+        get_status.reg = True
         status = "RGM"
     else:
         status = "ERR"
@@ -105,6 +103,7 @@ def get_status():
 
 get_status.old = ""
 get_status.err = ""
+get_status.reg = False
 
 
 def update_guiview_by_menu(err_str, info_str):
@@ -178,7 +177,7 @@ def acc_info_update():
         acc_label.config(text = "WARP", fg = "Tomato")
     acc_label.update_idletasks()
 
-    if regstr_missng == True:
+    if get_status.reg == True:
         slogan.config(image = cflogo)
     elif zerotrust == True:
         slogan.config(image = cflogo)
@@ -232,11 +231,11 @@ get_ipaddr.dbg = 0
 
 
 def enroll():
-    global registration_new_cmdline, acc_type, regstr_missng
+    global registration_new_cmdline, acc_type
 
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if acc_type == True or regstr_missng == True:
+        if acc_type == True or get_status.reg == True:
             cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
@@ -560,7 +559,7 @@ lbl_gui_ver = Label(frame, text = "GUI v0.7.9c", fg = "DimGray", bg = bgcolor,
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
 slogan = Button(frame, image = "", command=enroll)
-if regstr_missng == True:
+if get_status.reg == True:
     slogan.config(image = cflogo)
 elif acc_type == True:
     slogan.config(image = cflogo)
