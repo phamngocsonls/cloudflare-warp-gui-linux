@@ -496,8 +496,11 @@ def ipaddr_text_set(ipaddr_text=ipaddr_searching):
     ipaddr_label.update_idletasks()
 
 
-# Define our switch function
-def switch():
+def slide_switch():
+    if slide_switch.inrun:
+        return
+    slide_switch.inrun = 1
+    TestThreading.thread_pause = True
     on_button.config(state = DISABLED)
     on_button.update_idletasks()
 
@@ -515,10 +518,14 @@ def switch():
 
     ipaddr_text_set()
     auto_update_guiview()
+    TestThreading.thread_pause = False
+    slide_switch.inrun = 0
+
+slide_switch.inrun = 0
 
 ################################################################################
 
-on_button.config(command = switch, state = DISABLED)
+on_button.config(command = slide_switch, state = DISABLED)
 on_button.pack(pady = 0)
 
 
