@@ -545,6 +545,7 @@ class TestThreading(object):
                         stats_label_update()
                     update_guiview(status, 0)
                 else:
+                    stats_label.config(fg = "DimGray")
                     status_icon_update(status, get_access())
                 time.sleep(self.interval)
             else:
