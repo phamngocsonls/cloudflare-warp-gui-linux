@@ -260,11 +260,11 @@ def get_ipaddr(force=False):
     try:
         # using the access_token from ipinfo
         details = get_ipaddr.handler.getDetails(ipdis.text, timeout=(0.5,1.0))
-        country =  " (" + details.country + ")"
+        country_city = details.city + " (" + details.country + ")"
     except:
-        country = ""
+        country_city = ""
 
-    get_ipaddr.text = ipdis.text + country
+    get_ipaddr.text = country_city + "\n" + ipdis.text
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
@@ -416,10 +416,10 @@ warpver_label = Label(root, text = warp_version, fg = "DimGray",
 warpver_label.pack(pady = (0,10))
 
 #IP info
-ipaddr_searching = "-=-.-=-.-=-.-=-"
+ipaddr_searching = "\n-=-.-=-.-=-.-=-"
 ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
     font = ("Arial", 14), text = ipaddr_searching)
-ipaddr_label.pack(pady = (30,10))
+ipaddr_label.pack(pady = (20,10))
 
 # Create A Button
 on_button = Button(root, image = off, bd = 0, 
