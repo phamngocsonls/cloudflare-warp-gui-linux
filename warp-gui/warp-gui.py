@@ -58,9 +58,6 @@ from tkinter import simpledialog
 from functools import partial
 from random import choice
 
-#enter access_token from ipinfo
-access_token = ""
-handler = ipinfo.getHandler(access_token)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
@@ -221,28 +218,65 @@ def cf_info():
     return subprocess.getoutput("warp-cli --version")
 
 
+def force_get_ipaddr():
+    get_ipaddr(True)
+
+
 def get_ipaddr(force=False):
-    if force == False:
-        if get_ipaddr.text != "" and get_ipaddr.text[0] != '-':
-            return get_ipaddr.text
+    global ipaddr_searching
+
+    get_ipaddr.inrun = inrun_wait(get_ipaddr)
+
+    if get_ipaddr.dbg:
+        print("get_ipaddr(tries, force, ipv6):", get_ipaddr.tries, force,
+            get_ipaddr.text.find("::") > 0)
+
+    if force or get_ipaddr.text == "" or get_ipaddr.text == ipaddr_searching:
+        get_ipaddr.tries = 0
+    elif get_ipaddr.text == "\n" and get_ipaddr.tries < 2:
+        pass
+    elif get_ipaddr.tries < 2 and get_ipaddr.text.find("::") > 0:
+        get_ipaddr.inrun = 0
+        return get_ipaddr.text
+    elif get_ipaddr.tries > 0:
+        get_ipaddr.inrun = 0
+        return get_ipaddr.text
+
+    if get_ipaddr.dbg:
+        print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
+            get_ipaddr.text.replace("\n", " "))
+    get_ipaddr.tries += 1
 
     try:
         ipdis = get('https://' + choice(get_ipaddr.website), timeout=(0.5,1.0))
     except Exception as e:
+        if get_ipaddr.tries > 1:
+            root.after(3, force_get_ipaddr)
         if get_ipaddr.dbg:
-            print("get ipaddr: ", str(e))
-        return "-= error or timeout =-"
+            print("get ipaddr(try, exception):", get_ipaddr.tries, str(e))
+        get_ipaddr.inrun = 0
+        return "\n-= error or timeout =-"
 
     try:
-        country = handler.getDetails(ipdis.text, timeout=(0.5,1.0)).country
-        country = " (" + country + ")"
+        # using the access_token from ipinfo
+        details = get_ipaddr.handler.getDetails(ipdis.text, timeout=(0.5,1.0))
+        country =  " (" + details.country + ")"
     except:
         country = ""
+
     get_ipaddr.text = ipdis.text + country
+    if get_ipaddr.dbg:
+        print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
+            get_ipaddr.text.replace("\n", " "))
+    get_ipaddr.inrun = 0
     return get_ipaddr.text
 
+get_ipaddr.hadler_token = ""
+get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
 get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
+get_ipaddr.inrun = 0
 get_ipaddr.text = ""
+get_ipaddr.tries = 0
 get_ipaddr.dbg = 0
 
 
