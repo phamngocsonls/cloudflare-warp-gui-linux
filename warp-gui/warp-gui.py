@@ -209,28 +209,29 @@ def get_status():
     return status
 
 
-website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
-
 def get_ipaddr(force=False):
-    global website, ipaddr
+    global ipaddr
 
     if force == False:
         if ipaddr != "" and ipaddr[0] != '-':
             return ipaddr
 
     try:
-        ipdis = get('https://' + choice(website), timeout=(0.5,1.0)).text
+        ipdis = get('https://' + choice(get_ipaddr.website), timeout=(0.5,1.0))
+        ipaddr = ipdis.text
     except Exception as e:
         if False:
             print("get ipaddr: ", str(e))
         return "-= error or timeout =-"
 
     try:
-        details = handler.getDetails(ipdis, timeout=(0.5,1.0)).country
-        ipaddr = ipdis + " (" + details + ")"
-        return ipaddr
+        country = handler.getDetails(ipaddr, timeout=(0.5,1.0)).country
+        ipaddr += " (" + country + ")"
     except:
-        return ipdis
+        pass
+    return ipaddr
+
+get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
 
 
 def enroll():
