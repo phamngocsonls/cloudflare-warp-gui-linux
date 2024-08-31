@@ -81,16 +81,16 @@ def get_status():
     get_status.err = "\n".join(status_err)
 
     if status.find("Disconnected") > -1:
-        get_status.reg = False
+        get_status.reg = True
         status = "DN"
     elif status.find("Connected") > -1:
-        get_status.reg = False
+        get_status.reg = True
         status = "UP"
     elif status.find("Connecting") > -1:
-        get_status.reg = False
+        get_status.reg = True
         status = "CN"
     elif status.find("Registration Missing") > -1:
-        get_status.reg = True
+        get_status.reg = False
         status = "RGM"
     else:
         status = "ERR"
@@ -103,7 +103,7 @@ def get_status():
 
 get_status.old = ""
 get_status.err = ""
-get_status.reg = False
+get_status.reg = True
 
 
 def update_guiview_by_menu(err_str, info_str):
@@ -177,7 +177,7 @@ def acc_info_update():
         acc_label.config(text = "WARP", fg = "Tomato")
     acc_label.update_idletasks()
 
-    if get_status.reg == True:
+    if get_status.reg == False:
         slogan.config(image = cflogo)
     elif zerotrust == True:
         slogan.config(image = cflogo)
@@ -235,7 +235,7 @@ def enroll():
 
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if acc_type == True or get_status.reg == True:
+        if acc_type == True or get_status.reg == False:
             cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
@@ -559,7 +559,7 @@ lbl_gui_ver = Label(frame, text = "GUI v0.7.9c", fg = "DimGray", bg = bgcolor,
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
 slogan = Button(frame, image = "", command=enroll)
-if get_status.reg == True:
+if get_status.reg == False:
     slogan.config(image = cflogo)
 elif acc_type == True:
     slogan.config(image = cflogo)
