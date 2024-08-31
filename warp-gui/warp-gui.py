@@ -513,22 +513,19 @@ def slide_update(status):
         status_label.update_idletasks()
 
 
-old_warp_stats = warp_stats = ""
-
 def stats_label_update():
-    global warp_stats, old_warp_stats
-        
-    old_warp_stats = warp_stats
     warp_stats = subprocess.getoutput("warp-cli tunnel stats")
     if warp_stats == "":
-        warp_stats = old_warp_stats
-    elif warp_stats != old_warp_stats:
-        old_warp_stats = warp_stats
+        return
+    elif warp_stats != stats_label_update.old_warp_stats:
+        stats_label_update.old_warp_stats = warp_stats
         wsl = warp_stats.replace(';',' ')
         wsl = wsl.splitlines()
         wsl = wsl[0] + "\n" + "\n".join(map(str, wsl[2:]))
         stats_label.config(text = wsl, fg = "MidNightBlue")
         stats_label.update_idletasks()
+
+stats_label_update.old_warp_stats = ""
 
 
 class TestThreading(object):
