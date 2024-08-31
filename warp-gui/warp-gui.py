@@ -158,14 +158,13 @@ def session_renew():
     set_settings(warp_mode_old, warp_dnsf_old)
     update_guiview_by_menu(err_str, "WARP session renew")
 
-acc_type = ""
 
 def get_acc_type():
-    global acc_type
-
     account = subprocess.getoutput("warp-cli registration show")
-    acc_type = (account.find("Team") > -1)
-    return acc_type
+    get_acc_type.last = (account.find("Team") > -1)
+    return get_acc_type.last
+
+get_acc_type.last = ""
 
 def acc_info_update():
     status = get_status.old
@@ -187,7 +186,7 @@ def acc_info_update():
 
     status_icon_update(status, zerotrust)
 
-def status_icon_update(status=get_status.old, zerotrust=acc_type):
+def status_icon_update(status=get_status.old, zerotrust=get_acc_type.last):
     if zerotrust == True:
         if status == "UP":
             root.iconphoto(False,appicon_team)
@@ -231,11 +230,11 @@ get_ipaddr.dbg = 0
 
 
 def enroll():
-    global registration_new_cmdline, acc_type
+    global registration_new_cmdline
 
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if acc_type == True or get_status.reg == False:
+        if get_acc_type.last == True or get_status.reg == False:
             cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
@@ -561,7 +560,7 @@ lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 slogan = Button(frame, image = "", command=enroll)
 if get_status.reg == False:
     slogan.config(image = cflogo)
-elif acc_type == True:
+elif get_acc_type.last == True:
     slogan.config(image = cflogo)
 else:
     slogan.config(image = tmlogo)
