@@ -50,6 +50,7 @@ from tkinter import *
 import subprocess
 import time
 from requests import get
+from requests import urllib3
 import tkinter.font as tkFont
 import os
 import threading
@@ -221,8 +222,10 @@ def force_get_ipaddr():
     get_ipaddr(True)
 
 
+urllib3.util.connection.HAS_IPV6 = False
+
 def get_ipaddr(force=False):
-    global ipaddr_searching
+    global ipaddr_searching, ipaddr_errstring
 
     get_ipaddr.inrun = inrun_wait(get_ipaddr)
 
@@ -247,23 +250,18 @@ def get_ipaddr(force=False):
     get_ipaddr.tries += 1
 
     try:
-        ipdis = get('https://' + choice(get_ipaddr.website), timeout=(0.5,1.0))
+        get_ipaddr.ipv4 = get('http://' + choice(get_ipaddr.website),
+            timeout=(0.5,1.0)).text.replace("\n","")
     except Exception as e:
         if get_ipaddr.tries > 1:
             root.after(3, force_get_ipaddr)
         if get_ipaddr.dbg:
             print("get ipaddr(try, exception):", get_ipaddr.tries, str(e))
         get_ipaddr.inrun = 0
-        return "\n-= error or timeout =-"
+        return "\n" + ipaddr_errstring
 
-    try:
-        # using the access_token from ipinfo
-        details = get_ipaddr.handler.getDetails(ipdis.text, timeout=(0.5,1.0))
-        country_city = details.city + " (" + details.country + ")"
-    except:
-        country_city = ""
-
-    get_ipaddr.text = country_city + "\n" + ipdis.text
+    country_city = get_country_city(get_ipaddr.ipv4)
+    get_ipaddr.text = country_city + "\n" + get_ipaddr.ipv4
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
@@ -272,11 +270,35 @@ def get_ipaddr(force=False):
 
 get_ipaddr.hadler_token = ""
 get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
-get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text' ]
+get_ipaddr.website = ['ifconfig.me/ip', 'api.ipify.org/?format=text', 'ip4.me/ip/']
 get_ipaddr.inrun = 0
 get_ipaddr.text = ""
+get_ipaddr.ipv4 = ""
 get_ipaddr.tries = 0
 get_ipaddr.dbg = 0
+
+
+def get_country_city(ipaddr):
+    global ipaddr_errstring
+
+    if ipaddr == "":
+        return ""
+
+    try:
+        return get_country_city.dict[ipaddr]
+    except:
+        pass
+
+    try:
+        # using the access_token from ipinfo
+        details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.5,1.0))
+        strn = details.city + " (" + details.country + ")"
+        get_country_city.dict[ipaddr] = strn
+        return strn
+    except:
+        return ipaddr_errstring
+
+get_country_city.dict = dict()
 
 
 def enroll():
@@ -414,6 +436,7 @@ warpver_label.pack(pady = (0,10))
 
 #IP info
 ipaddr_searching = "\n-=-.-=-.-=-.-=-"
+ipaddr_errstring = "-= error or timeout =-"
 ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
     font = ("Arial", 14), text = ipaddr_searching)
 ipaddr_label.pack(pady = (20,10))
