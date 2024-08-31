@@ -278,27 +278,44 @@ get_ipaddr.tries = 0
 get_ipaddr.dbg = 0
 
 
+def reset_country_city_dict():
+    get_country_city.dict = dict()
+    get_country_city.dict_reset = reset_country_city_dict.delay
+#
+# geolocalization caching delay value:
+#   -N = perment cache (no reset)
+#    0 = no any cache (disabled)
+#   +N = last in seconds (temporary)
+#
+reset_country_city_dict.delay = 600
+
+
 def get_country_city(ipaddr):
     global ipaddr_errstring
 
     if ipaddr == "":
         return ""
 
-    try:
-        return get_country_city.dict[ipaddr]
-    except:
-        pass
+    if reset_country_city_dict.delay:
+        try:
+            return get_country_city.dict[ipaddr]
+        except:
+            pass
 
     try:
         # using the access_token from ipinfo
         details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.5,1.0))
         strn = details.city + " (" + details.country + ")"
         get_country_city.dict[ipaddr] = strn
+        if get_country_city.dict_reset > 0:
+            root.after(get_country_city.dict_reset, reset_country_city_dict)
+            get_country_city.dict_reset = 0
         return strn
     except:
         return ipaddr_errstring
 
 get_country_city.dict = dict()
+get_country_city.dict_reset = reset_country_city_dict.delay
 
 
 def enroll():
