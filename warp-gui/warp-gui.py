@@ -402,6 +402,7 @@ def change_ip_text():
     ipaddr_text_set(get_ipaddr())
     on_button.config(state = NORMAL)
     info_label.update_idletasks()
+    on_button.update_idletasks()
 
 
 def auto_update_guiview(errlog=1):
@@ -451,6 +452,7 @@ def switch():
     global status_old
 
     on_button.config(state = DISABLED)
+    on_button.update_idletasks()
 
     if status_old == "UP":
         status_old = "DC"
