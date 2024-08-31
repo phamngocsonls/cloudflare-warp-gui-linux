@@ -71,11 +71,7 @@ registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ################################################################################
 
-update_thread_pause = False
-
 def update_guiview_by_menu(err_str, info_str):
-    global update_thread_pause
-
     if err_str != "":
         err_str = err_str.split("\n")
         if err_str[0] == "Success":
@@ -88,27 +84,24 @@ def update_guiview_by_menu(err_str, info_str):
     stats_label.update_idletasks()
 
     update_guiview(get_status(), 0)
-    update_thread_pause = False
+    TestThreading.thread_pause = False
 
 
 status_old = ""
 
 def registration_delete():
-    global status_old, update_thread_pause
-
-    update_thread_pause = True
+    TestThreading.thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete")
     ipaddr_text_set()
     status_old = "RGM"
-
     update_guiview_by_menu(err_str, "registration delete")
 
 
 def session_renew():
-    global status_old, update_thread_pause, registration_new_cmdline
+    global status_old, registration_new_cmdline
     global warp_mode, warp_dnsf
 
-    update_thread_pause = True
+    TestThreading.thread_pause = True
 
     if warp_mode == 0 or warp_dnsf == 0:
         get_settings()
@@ -540,16 +533,16 @@ def stats_label_update():
 
 class TestThreading(object):
 
-    def __init__(self, interval=1):
+    def __init__(self, interval=1.0):
         self.interval = interval
+        self.thread_pause = False
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
         thread.start()
 
     def run(self,acc_label):
-        global update_thread_pause
         while True:
-            if update_thread_pause == False:
+            if self.thread_pause == False:
                 status = get_status()
                 try:
                     top = root.attributes('-topmost')
@@ -562,7 +555,6 @@ class TestThreading(object):
                     update_guiview(status, 0)
                 else:
                     status_icon_update(status, get_acc_type())
-
             time.sleep(self.interval)
 
 ################################################################################
