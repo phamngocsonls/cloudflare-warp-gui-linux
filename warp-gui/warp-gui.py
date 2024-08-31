@@ -148,16 +148,8 @@ def acc_info_update():
 
     if zerotrust == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
-        if status == "UP":
-            root.iconphoto(False,appicon_team)
-        else:
-            root.iconphoto(False,appicon_pass)
     else:
         acc_label.config(text = "WARP", fg = "Tomato")
-        if status == "UP":
-            root.iconphoto(False,appicon_warp)
-        else:
-            root.iconphoto(False,appicon_pass)
     acc_label.update_idletasks()
 
     if regstr_missng == True:
@@ -168,6 +160,7 @@ def acc_info_update():
         slogan.config(image = tmlogo)
     slogan.update_idletasks()
 
+    status_icon_update(status, zerotrust)
 
 def status_icon_update(status=status_old, zerotrust=acc_type):
     if zerotrust == True:
