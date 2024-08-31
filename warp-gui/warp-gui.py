@@ -95,13 +95,13 @@ def get_status():
     else:
         status = "ERR"
 
-    if status != get_status.old:
+    if status != get_status.last:
         get_ipaddr.text = ""
-        get_status.old = status
+        get_status.last = status
 
     return status
 
-get_status.old = ""
+get_status.last = ""
 get_status.err = ""
 get_status.reg = True
 
@@ -126,7 +126,7 @@ def registration_delete():
     TestThreading.thread_pause = True
     err_str = subprocess.getoutput("warp-cli registration delete")
     ipaddr_text_set()
-    get_status.old = "RGM"
+    get_status.last = "RGM"
     update_guiview_by_menu(err_str, "registration delete")
 
 
@@ -138,10 +138,10 @@ def session_renew():
 
     if warp_mode == 0 or warp_dnsf == 0:
         get_settings()
-    if get_status.old == "":
+    if get_status.last == "":
         get_status()
 
-    oldval = get_status.old
+    oldval = get_status.last
     warp_mode_old = warp_mode
     warp_dnsf_old = warp_dnsf
     cmdline = registration_new_cmdline
@@ -151,24 +151,25 @@ def session_renew():
     ipaddr_text_set()
     err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
-        get_status.old = "CN"
+        get_status.last = "CN"
     else:
-        get_status.old = "DN"
+        get_status.last = "DN"
 
     set_settings(warp_mode_old, warp_dnsf_old)
     update_guiview_by_menu(err_str, "WARP session renew")
 
 
-def get_acc_type():
+def get_access():
     account = subprocess.getoutput("warp-cli registration show")
-    get_acc_type.last = (account.find("Team") > -1)
-    return get_acc_type.last
+    get_access.last = (account.find("Team") > -1)
+    return get_access.last
 
-get_acc_type.last = ""
+
+get_access.last = ""
 
 def acc_info_update():
-    status = get_status.old
-    zerotrust = get_acc_type()
+    status = get_status.last
+    zerotrust = get_access()
 
     if zerotrust == True:
         acc_label.config(text = "Zero Trust", fg = "Blue")
@@ -186,7 +187,8 @@ def acc_info_update():
 
     status_icon_update(status, zerotrust)
 
-def status_icon_update(status=get_status.old, zerotrust=get_acc_type.last):
+
+def status_icon_update(status=get_status.last, zerotrust=get_access.last):
     if zerotrust == True:
         if status == "UP":
             root.iconphoto(False,appicon_team)
@@ -234,7 +236,7 @@ def enroll():
 
     subprocess.getoutput("warp-cli disconnect")
     try:
-        if get_acc_type.last == True or get_status.reg == False:
+        if get_access.last == True or get_status.reg == False:
             cmdline = registration_new_cmdline
             subprocess.getoutput(cmdline)
             slogan.config(image = cflogo)
@@ -431,7 +433,7 @@ def update_guiview(status, errlog=1):
 def ipaddr_text_set(ipaddr_text=ipaddr_tocheck_waitstr):
     if ipaddr_text == ipaddr_tocheck_waitstr:
         info_label.config(fg = "DimGray")
-    if get_status.old != "UP":
+    if get_status.last != "UP":
         info_label.config(fg = "DimGray")
     else:
         info_label.config(fg = "MidNightBlue")
@@ -444,13 +446,13 @@ def switch():
     on_button.config(state = DISABLED)
     on_button.update_idletasks()
 
-    if get_status.old == "UP":
-        get_status.old = "DC"
+    if get_status.last == "UP":
+        get_status.last = "DC"
         status_label.config(text = "Disconnecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli disconnect")
-    elif get_status.old == "DN":
-        get_status.old = "CN"
+    elif get_status.last == "DN":
+        get_status.last = "CN"
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
         retstr = subprocess.getoutput("warp-cli --accept-tos connect")
@@ -543,7 +545,7 @@ class TestThreading(object):
                         stats_label_update()
                     update_guiview(status, 0)
                 else:
-                    status_icon_update(status, get_acc_type())
+                    status_icon_update(status, get_access())
                 time.sleep(self.interval)
             else:
                 time.sleep(self.interval/2)
@@ -560,7 +562,7 @@ lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 slogan = Button(frame, image = "", command=enroll)
 if get_status.reg == False:
     slogan.config(image = cflogo)
-elif get_acc_type.last == True:
+elif get_access.last == True:
     slogan.config(image = cflogo)
 else:
     slogan.config(image = tmlogo)
