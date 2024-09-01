@@ -815,7 +815,7 @@ print("\nrun.py path", dir_path,
       "\nipaddr url4", ", ".join(get_ipaddr.wurl4),
       "\nipaddr url6", ", ".join(get_ipaddr.wurl6),
       "\nnetwork has", ("IPv6" if network_has_ipv6 else "IPv4"),
-       ("" if urllib3.util.connection.HAS_IPV6 else "disabled"),
+       ("enabled" if urllib3.util.connection.HAS_IPV6 else "disabled"),
       "\n")
 
 root.config(menu=menubar)
