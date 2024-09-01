@@ -530,9 +530,9 @@ threading.Thread(target=acc_info_update).start()
 
 def wait_status():
     status = get_status()
-    if status == "CN":
+    if status == "CN" or status == "DC":
         stats_label.config(text = "")
-        while status == "CN":
+        while status == "CN" or status == "DC":
             time.sleep(0.5)
             status = get_status()
         time.sleep(0.5)
