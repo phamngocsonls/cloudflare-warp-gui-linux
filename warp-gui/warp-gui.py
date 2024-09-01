@@ -341,8 +341,9 @@ def get_ipaddr(force=False):
 
 get_ipaddr.hadler_token = ""
 get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
-get_ipaddr.wurl4 = ['ifconfig.me/ip', 'api.ipify.org/',  'ip4.me/ip/']
-get_ipaddr.wurl6 = ['ifconfig.me/ip', 'api6.ipify.org/', 'ip6only.me/ip/']
+get_ipaddr.wurls = ['ifconfig.me/ip', 'icanhazip.com', 'myip.wtf/text', 'eth0.me']
+get_ipaddr.wurl6 = ['api6.ipify.org/','ip6only.me/ip/'] + get_ipaddr.wurls
+get_ipaddr.wurl4 = ['api.ipify.org/', 'ip4.me/ip/'] + get_ipaddr.wurls
 get_ipaddr.inrun = 0
 get_ipaddr.text = ""
 get_ipaddr.ipv4 = ""
