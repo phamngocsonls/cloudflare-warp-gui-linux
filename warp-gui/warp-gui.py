@@ -711,7 +711,7 @@ class TestThreading(object):
     def run(self, acc_label):
         while True:
             if self.skip:
-                time.sleep(self.interval/2)
+                time.sleep(0.10)
                 continue
             status = get_status()
             try:
