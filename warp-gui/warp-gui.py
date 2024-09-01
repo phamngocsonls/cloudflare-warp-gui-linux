@@ -524,7 +524,7 @@ if get_status() == "UP":
 else:
     ipaddr_label.config(fg = "DimGray")
 
-root.tr = threading.Thread(target=acc_info_update).start()
+threading.Thread(target=acc_info_update).start()
 
 ################################################################################
 
@@ -555,6 +555,7 @@ def update_guiview(status, errlog=1):
     if update_guiview.inrun:
         return
     update_guiview.inrun = 1
+    TestThreading.thread_pause = True
 
     stats_err = 0
     if errlog and get_status.err != "":
@@ -572,12 +573,13 @@ def update_guiview(status, errlog=1):
     stats_label.update_idletasks()
 
     if status != "CN" and status != "DC":
-        root.tr = threading.Thread(target=acc_info_update).start()
-        root.tr = threading.Thread(target=change_ip_text).start()
-        root.tr = threading.Thread(target=get_settings).start()
+        threading.Thread(target=acc_info_update).start()
+        threading.Thread(target=change_ip_text).start()
+        threading.Thread(target=get_settings).start()
         slide_update(status)
+        time.sleep(0.1)
 
-    time.sleep(0.1)
+    TestThreading.thread_pause = False
     update_guiview.inrun = 0
 
 update_guiview.inrun = 0
