@@ -733,7 +733,7 @@ class TestThreading(object):
 frame = Frame(root, bg = bgcolor)
 frame.pack(side=BOTTOM, fill=X)
 
-lbl_gui_ver = Label(frame, text = "GUI v0.8.0", fg = "DimGray", bg = bgcolor,
+lbl_gui_ver = Label(frame, text = "GUI v0.8.1", fg = "DimGray", bg = bgcolor,
     font = ("Arial", 11, 'bold'), pady=10, padx=10)
 lbl_gui_ver.place(relx=0.0, rely=1.0, anchor='sw')
 
