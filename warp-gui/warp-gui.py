@@ -693,6 +693,7 @@ stats_label_update.inrun = 0
 class TestThreading(object):
 
     def __init__(self, interval=1.0):
+        self.skip = 0
         self.interval = interval
         self._event = threading.Event()
         thread = threading.Thread(target=self.run, args=(acc_label,))
@@ -700,13 +701,18 @@ class TestThreading(object):
         thread.start()
 
     def pause(self):
+        self.skip = 1
         self._event.clear()
 
     def resume(self):
         self._event.set()
+        self.skip = 0
 
     def run(self, acc_label):
         while True:
+            if self.skip:
+                time.sleep(self.interval/2)
+                continue
             status = get_status()
             try:
                 top = root.attributes('-topmost')
