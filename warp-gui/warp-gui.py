@@ -102,16 +102,38 @@ def ipv6_get_ipaddr(url="ifconfig.me"):
 
 ################################################################################
 
-def inrun_wait(func, wait=0):
+import sys
+# for current func name, specify 0 or no argument.
+# for name of caller of current func, specify 1.
+# for name of caller of caller of current func, specify 2. etc.
+func_name = lambda n=0: sys._getframe(n+1).f_code.co_name
+
+# RAF, TODO
+#
+# This lock mechanism is based on a non atomic check-and-set opration in the
+# future it can be changed using the 'with lock' paradigm and involving a
+# threading.Lock(). However, there is no any race condition here to address but
+# just a operational serialisation just for optimisation. Hence a flag is ok.
+#
+##  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #
+def inrun_wait_or_set(wait=0):
+    func = eval(func_name(1))
     if wait > 0:
         time.sleep(wait)
-    elif func.inrun:
+    else:
         while func.inrun:
             time.sleep(0.10)
-    return 1
+    func.inrun = 1
+
+
+def inrun_reset(val=None):
+    func = eval(func_name(1))
+    func.inrun = 0
+    return val
+##  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #
 
 def get_status(wait=0):
-    get_status.inrun = inrun_wait(get_status, wait)
+    inrun_wait_or_set(wait)
 
     status = subprocess.getoutput("warp-cli status")
     if status.find("Success") == 0:
@@ -139,8 +161,7 @@ def get_status(wait=0):
         get_ipaddr.text = ""
         get_status.last = status
 
-    get_status.inrun = 0
-    return status
+    return inrun_reset(status)
 
 get_status.last = ""
 get_status.err = ""
@@ -201,13 +222,12 @@ def session_renew():
 
 
 def get_access():
-    get_access.inrun = inrun_wait(get_access)
+    inrun_wait_or_set()
 
     account = subprocess.getoutput("warp-cli registration show")
     get_access.last = (account.find("Team") > -1)
 
-    get_access.inrun = 0
-    return get_access.last
+    return inrun_reset(get_access.last)
 
 get_access.last = ""
 get_access.inrun = 0
@@ -259,7 +279,7 @@ def force_get_ipaddr():
 def get_ipaddr(force=False):
     global ipaddr_searching, ipaddr_errstring
 
-    get_ipaddr.inrun = inrun_wait(get_ipaddr)
+    inrun_wait_or_set()
 
     if get_ipaddr.dbg:
         print("get_ipaddr(tries, force, ipv6):", get_ipaddr.tries, force,
@@ -272,11 +292,9 @@ def get_ipaddr(force=False):
     elif get_ipaddr.tries < 2 \
     and urllib3.util.connection.HAS_IPV6 \
     and get_ipaddr.text.find("::") > 0:
-        get_ipaddr.inrun = 0
-        return get_ipaddr.text
+        return inrun_reset(get_ipaddr.text)
     elif get_ipaddr.tries > 0:
-        get_ipaddr.inrun = 0
-        return get_ipaddr.text
+        return inrun_reset(get_ipaddr.text)
 
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
@@ -306,9 +324,7 @@ def get_ipaddr(force=False):
     if ipv4 + ipv6 == "":
         if get_ipaddr.tries > 1:
             root.after(3, force_get_ipaddr)
-        get_ipaddr.inrun = 0
-        #eturn "\n" + ipaddr_errstring
-        return ipaddr_errstring
+        return inrun_reset(ipaddr_errstring)
 
     country_city = get_country_city(get_ipaddr.ipv4)
     if country_city == "" and get_ipaddr.tries > 1:
@@ -321,8 +337,7 @@ def get_ipaddr(force=False):
         print("get_ipaddr(try, ipstr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
 
-    get_ipaddr.inrun = 0
-    return get_ipaddr.text
+    return inrun_reset(get_ipaddr.text)
 
 get_ipaddr.hadler_token = ""
 get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
