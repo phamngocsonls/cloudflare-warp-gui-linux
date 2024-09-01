@@ -161,11 +161,11 @@ def update_guiview_by_menu(err_str, info_str):
     stats_label.update_idletasks()
 
     update_guiview(get_status(), 0)
-    TestThreading.thread_pause = False
+    root.tr.resume()
 
 
 def registration_delete():
-    TestThreading.thread_pause = True
+    root.tr.pause()
     err_str = subprocess.getoutput("warp-cli registration delete")
     ipaddr_text_set()
     get_status.last = "RGM"
@@ -175,7 +175,7 @@ def registration_delete():
 def session_renew():
     global registration_new_cmdline
 
-    TestThreading.thread_pause = True
+    root.tr.pause()
 
     if get_settings.warp_mode == 0 or get_settings.warp_dnsf == 0:
         get_settings()
@@ -316,7 +316,7 @@ def get_ipaddr(force=False):
 
     #get_ipaddr.text = country_city + "\n" + ipv4 + "\n" + ipv6
     get_ipaddr.text = ipv4 + " - " + country_city + "\n" \
-        + (ipv6 if ipv6 else "~o~o:o~o~:~o~o:o~::~o:o~")
+        + (ipv6 if ipv6 else "-= ipv6 address unavailable =-")
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipstr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
@@ -555,7 +555,7 @@ def update_guiview(status, errlog=1):
     if update_guiview.inrun:
         return
     update_guiview.inrun = 1
-    TestThreading.thread_pause = True
+    root.tr.pause()
 
     stats_err = 0
     if errlog and get_status.err != "":
@@ -579,7 +579,7 @@ def update_guiview(status, errlog=1):
         slide_update(status)
         time.sleep(0.1)
 
-    TestThreading.thread_pause = False
+    root.tr.resume()
     update_guiview.inrun = 0
 
 update_guiview.inrun = 0
@@ -600,7 +600,8 @@ def slide_switch():
     if slide_switch.inrun:
         return
     slide_switch.inrun = 1
-    TestThreading.thread_pause = True
+
+    root.tr.pause()
     on_button.config(state = DISABLED)
     on_button.update_idletasks()
 
@@ -618,7 +619,8 @@ def slide_switch():
 
     ipaddr_text_set()
     auto_update_guiview()
-    TestThreading.thread_pause = False
+
+    root.tr.resume()
     slide_switch.inrun = 0
 
 slide_switch.inrun = 0
@@ -692,30 +694,33 @@ class TestThreading(object):
 
     def __init__(self, interval=1.0):
         self.interval = interval
-        self.thread_pause = False
+        self._event = threading.Event()
         thread = threading.Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
         thread.start()
 
-    def run(self,acc_label):
+    def pause(self):
+        self._event.clear()
+
+    def resume(self):
+        self._event.set()
+
+    def run(self, acc_label):
         while True:
-            if self.thread_pause == False:
-                status = get_status()
-                try:
-                    top = root.attributes('-topmost')
-                    top |= (root.focus_get() != None)
-                except:
-                    top = 1
-                if top == 1:
-                    if status == "UP":
-                        stats_label_update()
-                    update_guiview(status, 0)
-                else:
-                    stats_label.config(fg = "DimGray")
-                    status_icon_update(status, get_access())
-                time.sleep(self.interval)
+            status = get_status()
+            try:
+                top = root.attributes('-topmost')
+                top |= (root.focus_get() != None)
+            except:
+                top = 1
+            if top == 1:
+                if status == "UP":
+                    stats_label_update()
+                update_guiview(status, 0)
             else:
-                time.sleep(self.interval/2)
+                stats_label.config(fg = "DimGray")
+                status_icon_update(status, get_access())
+            time.sleep(self.interval)
 
 ################################################################################
 
