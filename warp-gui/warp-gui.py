@@ -107,7 +107,7 @@ def inrun_wait(func, wait=0):
         time.sleep(wait)
     elif func.inrun:
         while func.inrun:
-            time.sleep(0.1)
+            time.sleep(0.10)
     return 1
 
 def get_status(wait=0):
@@ -535,7 +535,7 @@ def wait_status():
         status = get_status()
         if status != "CN" and status != "DC":
             return status
-        time.sleep(0.25)
+        time.sleep(0.10)
 
     return status
 
@@ -577,7 +577,7 @@ def update_guiview(status, errlog=1):
         threading.Thread(target=change_ip_text).start()
         threading.Thread(target=get_settings).start()
         slide_update(status)
-        time.sleep(0.1)
+        time.sleep(0.10)
 
     root.tr.resume()
     update_guiview.inrun = 0
