@@ -616,12 +616,12 @@ root.config(bg = bgcolor)
 
 menubar = Menu(root, bg = bgcolor, activeborderwidth = 4, relief=GROOVE, fg = "Black")
 helpmenu = Menu(menubar, tearoff=1, font = "Arial 12", title="WARP GUI > MENU")
-menubar.add_cascade(label="\u25BD MENU", compound="left" ,menu=helpmenu)
+menubar.add_cascade(label="\u25BD MENU", compound="left", menu=helpmenu)
 menubar.add_cascade(label="\u205D",    compound="left")
 menubar.add_command(label="\u21F1 IP \u21F2", compound="left", command=force_get_ipaddr)
 
-helpmenu.add_command(label=" \u204e WARP Session Renew ", command=session_renew)
-helpmenu.add_command(label=" \u204e WARP Session Delete", command=registration_delete)
+helpmenu.add_command(label=" \u204E WARP Session Renew ", command=session_renew)
+helpmenu.add_command(label=" \u204E WARP Session Delete", command=registration_delete)
 helpmenu.add_separator()
 helpmenu.add_command(label="\u2058 DNS Filter: family",   command=partial(set_dns_filter, "full"))
 helpmenu.add_command(label="\u2058 DNS Filter: malware",  command=partial(set_dns_filter, "malware"))
@@ -633,8 +633,10 @@ helpmenu.add_command(label=" \u2022 WARP Mode: tunnel",   command=partial(set_mo
 helpmenu.add_command(label=" \u2022 WARP Mode: proxy",    command=partial(set_mode, "proxy"))
 helpmenu.add_separator()
 helpmenu.add_command(label="\u21C5 Service Taskbar Icon", command=service_taskbar)
-helpmenu.add_command(label="\u21C5 Refresh Information",  command=information_refresh)
-
+helpmenu.add_command(label="\u21BA Refresh Information",  command=information_refresh)
+helpmenu.add_separator()
+helpmenu.add_command(label="\u24D8 GUI App Information",  command="")
+helpmenu.add_command(label="\u24E7 GUI App Termination",  command="exit")
 
 # Access information
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
