@@ -333,19 +333,17 @@ def get_ipaddr(force=False):
         ipv4 = ipv4_get_ipaddr(url4)
         get_ipaddr.ipv4 = ipv4
     except Exception as e:
-        if get_ipaddr.dbg:
-            print("ERR> get ipv4(try, exception):", get_ipaddr.tries, str(e))
-        else:
-            print(f"WRN> ipv4_get_ipaddr( {url4} ) failed")
+        if 1 or get_ipaddr.dbg:
+            print(f"ERR> ipv4_get_ipaddr({url4}) failed({get_ipaddr.tries}) -",
+                str(e))
         get_ipaddr.ipv4 = ""
     try:
         ipv6 = ipv6_get_ipaddr(url6)
         get_ipaddr.ipv6 = ipv6
     except Exception as e:
-        if get_ipaddr.dbg:
-            print("ERR> get ipv6(try, exception):", get_ipaddr.tries, str(e))
-        else:
-            print(f"WRN> ipv6_get_ipaddr( {url6} ) failed")
+        if 1 or get_ipaddr.dbg:
+            print(f"ERR> ipv6_get_ipaddr({url6}) failed({get_ipaddr.tries}) -",
+                str(e))
         get_ipaddr.ipv6 = ""
 
     if not ipv4 and not ipv6:
@@ -410,6 +408,9 @@ def get_country_city(ipaddr):
         root.after(get_country_city.delay, reset_country_city_dict)
         get_country_city.reset = 0
     get_country_city.dict[ipaddr] = strn
+    
+    if get_ipaddr.dbg:
+        print("get_country_city.dict =", get_country_city.dict)
 
     return strn
 
