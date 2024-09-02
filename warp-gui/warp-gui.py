@@ -497,6 +497,8 @@ root.config(bg = bgcolor)
 menubar = Menu(root, bg = bgcolor, activeborderwidth = 4)
 helpmenu = Menu(menubar, tearoff=1, relief=RAISED, font = "Arial 11")
 menubar.add_cascade(label="\u25BD MENU", compound="left" ,menu=helpmenu)
+menubar.add_cascade(label="\u205D",    compound="left")
+menubar.add_command(label="\u21F1 IP \u21F2", compound="left", command=force_get_ipaddr)
 
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
