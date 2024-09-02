@@ -45,6 +45,12 @@
 ################################################################################
 # To check the WARP connection: curl https://www.cloudflare.com/cdn-cgi/trace/
 
+# RAF, TODO
+#
+# pgrep -u $USER -alf warp-gui.py | grep -e "[0-9]* python.*[ /]warp-gui.py$"
+# from tkinter import BOTH, NORMAL, ACTIVE, DISABLED
+##  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #
+
 # Import pip3 Module
 from tkinter import *
 import subprocess
