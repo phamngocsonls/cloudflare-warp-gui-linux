@@ -59,6 +59,7 @@ from subprocess import getoutput
 from requests import get as getUrl, urllib3
 from threading import Thread, Event
 
+filename = path.basename(__file__)
 dir_path = path.dirname(path.realpath(__file__))
 
 registration_new_cmdline = "warp-cli --accept-tos registration new"
@@ -552,6 +553,23 @@ def slide_switch():
 
 slide_switch.inrun = 0
 
+
+def kill_all_instances(filename=filename):
+    if not filename:
+        return
+
+    cmd_kill_all = '"s/\([0-9]*\) python.*[ /]' + filename + '$/\\\\1/p"'
+    cmd_kill_all = 'pgrep -u $USER -alf ' + filename + ' | sed -n ' \
+                  + cmd_kill_all + " | xargs kill"
+    ret_str = ""
+    try:
+        ret_str = getoutput(cmd_kill_all)
+    except Exception as e:
+        print(f"ERR> kill_all_instances(): {ret_str}\n\n", str(e))
+
+    sleep(0.1)
+    exit()
+
 # create root windows ##########################################################
 
 from functools import partial
@@ -636,7 +654,7 @@ helpmenu.add_command(label="\u21C5 Service Taskbar Icon", command=service_taskba
 helpmenu.add_command(label="\u21BA Refresh Information",  command=information_refresh)
 helpmenu.add_separator()
 helpmenu.add_command(label="\u24D8 GUI App Information",  command="")
-helpmenu.add_command(label="\u24E7 GUI App Termination",  command="exit")
+helpmenu.add_command(label="\u24E7 GUI App Termination",  command=kill_all_instances)
 
 # Access information
 acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
@@ -862,7 +880,8 @@ network_has_ipv6 = urllib3.util.connection.HAS_IPV6
 # This line can enable or disable the IPv6 for 'requests' methods
 urllib3.util.connection.HAS_IPV6 = True
 
-print("\nrun.py path", dir_path,
+print("\nthis script", filename,
+      "\nrun.py path", dir_path,
       "\nipaddr url4", ", ".join(get_ipaddr.wurl4),
       "\nipaddr url6", ", ".join(get_ipaddr.wurl6),
       "\nnetwork has", ("IPv6" if network_has_ipv6 else "IPv4"),
