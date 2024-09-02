@@ -305,13 +305,17 @@ def get_ipaddr(force=False):
     except Exception as e:
         if get_ipaddr.dbg:
             print("ERR> get ipv4(try, exception):", get_ipaddr.tries, str(e))
+        else:
+            print(f"WRN> ipv4_get_ipaddr( {url4} ) failed")
         get_ipaddr.ipv4 = ""
     try:
         ipv6 = ipv6_get_ipaddr(url6)
         get_ipaddr.ipv6 = ipv6
     except Exception as e:
         if get_ipaddr.dbg:
-            print("ERR>  get ipv6(try, exception):", get_ipaddr.tries, str(e))
+            print("ERR> get ipv6(try, exception):", get_ipaddr.tries, str(e))
+        else:
+            print(f"WRN> ipv6_get_ipaddr( {url6} ) failed")
         get_ipaddr.ipv6 = ""
 
     if not ipv4 and not ipv6:
