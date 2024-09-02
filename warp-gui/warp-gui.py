@@ -65,6 +65,9 @@ registration_new_cmdline = "warp-cli --accept-tos registration new"
 registration_new_cmdline +=" && warp-cli dns families malware"
 registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
+ipaddr_errstring = "\n-= error or timeout =-"
+ipaddr_searching = "\n-=-.-=-.-=-.-=-"
+
 ################################################################################
 
 import requests
@@ -169,7 +172,7 @@ get_status.reg = True
 get_status.inrun = 0
 
 
-def update_guiview_by_menu(err_str, info_str):
+def update_guiview_by_menu(err_str, info_str=""):
     if err_str != "":
         err_str = err_str.split("\n")
         if err_str[0] == "Success":
@@ -177,6 +180,8 @@ def update_guiview_by_menu(err_str, info_str):
         else:
             err_str = err_str[0].split(".")
             err_str = "\n".join(err_str)
+        if not info_str:
+            info_str = err_str
 
     stats_label.config(text = err_str, fg = "OrangeRed")
     stats_label.update_idletasks()
@@ -191,6 +196,13 @@ def registration_delete():
     ipaddr_text_set()
     get_status.last = "RGM"
     update_guiview_by_menu(err_str, "registration delete")
+
+
+def information_refresh():
+    root.tr.pause()
+    ipaddr_text_set()
+    get_status.last = ""
+    update_guiview_by_menu("information refresh")
 
 
 def session_renew():
@@ -434,116 +446,6 @@ def service_taskbar():
         cmdline+=' systemctl --user stop warp-taskbar'
     retstr = subprocess.getoutput(cmdline)
 
-# create root windows ##########################################################
-
-bgcolor = "GainsBoro"
-root = Tk()
-
-on_dir = dir_path + "/free/slide-on.png"
-on = PhotoImage(file = on_dir)
-
-off_dir = dir_path + "/free/slide-off.png"
-off = PhotoImage(file = off_dir)
-
-try:
-    logo_dir = dir_path + "/orig/team-logo.png"
-    tmlogo = PhotoImage(file = logo_dir)
-except:
-    logo_dir = dir_path + "/free/team-letter.png"
-    tmlogo = PhotoImage(file = logo_dir)
-
-try:
-    cflogo_dir = dir_path + "/orig/warp-logo.png"
-    cflogo = PhotoImage(file = cflogo_dir)
-except:
-    cflogo_dir = dir_path + "/free/warp-letter.png"
-    cflogo = PhotoImage(file = cflogo_dir)
-
-try:
-    appicon_path = dir_path + "/orig/appicon-init.png"
-    appicon_init = PhotoImage(file = appicon_path)
-except:
-    appicon_path = dir_path + "/free/appclou-init.png"
-    appicon_init = PhotoImage(file = appicon_path)
-
-try:
-    appicon_path = dir_path + "/orig/appicon-pass.png"
-    appicon_pass = PhotoImage(file = appicon_path)
-except:
-    appicon_path = dir_path + "/free/appclou-pass.png"
-    appicon_pass = PhotoImage(file = appicon_path)   
-
-try:
-    appicon_path = dir_path + "/orig/appicon-warp.png"
-    appicon_warp = PhotoImage(file = appicon_path)
-except:
-    appicon_path = dir_path + "/free/appclou-warp.png"
-    appicon_warp = PhotoImage(file = appicon_path)
-
-try:
-    appicon_path = dir_path + "/orig/appicon-team.png"
-    appicon_team = PhotoImage(file = appicon_path)
-except:
-    appicon_path = dir_path + "/free/appclou-team.png"
-    appicon_team = PhotoImage(file = appicon_path)
-
-# root window background color, title, dimension and position
-root.title("WARP GUI")
-root.geometry("360x480+120+90")
-root.resizable(False,False)
-root.iconphoto(True,appicon_init)
-root.config(bg = bgcolor)
-
-menubar = Menu(root, bg = bgcolor, activeborderwidth = 4)
-helpmenu = Menu(menubar, tearoff=1, relief=RAISED, font = "Arial 11")
-menubar.add_cascade(label="\u25BD MENU", compound="left" ,menu=helpmenu)
-menubar.add_cascade(label="\u205D",    compound="left")
-menubar.add_command(label="\u21F1 IP \u21F2", compound="left", command=force_get_ipaddr)
-
-helpmenu.add_command(label="Registration Delete", command=registration_delete)
-helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
-helpmenu.add_command(label="WARP Service Taskbar",command=service_taskbar)
-helpmenu.add_separator()
-helpmenu.add_command(label="DNS Filter: family",  command=partial(set_dns_filter, "full"))
-helpmenu.add_command(label="DNS Filter: malware", command=partial(set_dns_filter, "malware"))
-helpmenu.add_separator()
-helpmenu.add_command(label="WARP Mode: doh",      command=partial(set_mode, "doh"))
-helpmenu.add_command(label="WARP Mode: warp",     command=partial(set_mode, "warp"))
-helpmenu.add_command(label="WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
-helpmenu.add_command(label="WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
-helpmenu.add_command(label="WARP Mode: proxy",    command=partial(set_mode, "proxy"))
-
-#Acc info
-acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
-acc_label.pack(pady = 0)
-
-version = cf_info()
-if version.find("not found") > -1:
-    warp_version = "WARP not found"
-else:
-    warp_version = version
-warpver_label = Label(root, text = warp_version, fg = "DimGray",
-    bg = bgcolor, font = ("Arial", 12))
-warpver_label.pack(pady = (0,10))
-
-#IP info
-ipaddr_searching = "\n-=-.-=-.-=-.-=-"
-ipaddr_errstring = "\n-= error or timeout =-"
-ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
-    font = ("Arial", 14), text = ipaddr_searching)
-ipaddr_label.pack(pady = (20,10))
-
-# Create A Button
-on_button = Button(root, image = off, bd = 0, 
-    activebackground = bgcolor, bg = bgcolor)
-if get_status() == "UP":
-    on_button.config(image = on)
-else:
-    ipaddr_label.config(fg = "DimGray")
-
-threading.Thread(target=acc_info_update).start()
-
-################################################################################
 
 def wait_status():
     while True:
@@ -641,6 +543,116 @@ def slide_switch():
     slide_switch.inrun = 0
 
 slide_switch.inrun = 0
+
+# create root windows ##########################################################
+
+bgcolor = "GainsBoro"
+root = Tk()
+
+on_dir = dir_path + "/free/slide-on.png"
+on = PhotoImage(file = on_dir)
+
+off_dir = dir_path + "/free/slide-off.png"
+off = PhotoImage(file = off_dir)
+
+try:
+    logo_dir = dir_path + "/orig/team-logo.png"
+    tmlogo = PhotoImage(file = logo_dir)
+except:
+    logo_dir = dir_path + "/free/team-letter.png"
+    tmlogo = PhotoImage(file = logo_dir)
+
+try:
+    cflogo_dir = dir_path + "/orig/warp-logo.png"
+    cflogo = PhotoImage(file = cflogo_dir)
+except:
+    cflogo_dir = dir_path + "/free/warp-letter.png"
+    cflogo = PhotoImage(file = cflogo_dir)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-init.png"
+    appicon_init = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-init.png"
+    appicon_init = PhotoImage(file = appicon_path)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-pass.png"
+    appicon_pass = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-pass.png"
+    appicon_pass = PhotoImage(file = appicon_path)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-warp.png"
+    appicon_warp = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-warp.png"
+    appicon_warp = PhotoImage(file = appicon_path)
+
+try:
+    appicon_path = dir_path + "/orig/appicon-team.png"
+    appicon_team = PhotoImage(file = appicon_path)
+except:
+    appicon_path = dir_path + "/free/appclou-team.png"
+    appicon_team = PhotoImage(file = appicon_path)
+
+# root window background color, title, dimension and position
+root.title("WARP GUI")
+root.geometry("360x480+120+90")
+root.resizable(False,False)
+root.iconphoto(True,appicon_init)
+root.config(bg = bgcolor)
+
+menubar = Menu(root, bg = bgcolor, activeborderwidth = 4, relief=GROOVE, fg = "Black")
+helpmenu = Menu(menubar, tearoff=1, font = "Arial 12", title="WARP GUI > MENU")
+menubar.add_cascade(label="\u25BD MENU", compound="left" ,menu=helpmenu)
+menubar.add_cascade(label="\u205D",    compound="left")
+menubar.add_command(label="\u21F1 IP \u21F2", compound="left", command=force_get_ipaddr)
+
+helpmenu.add_command(label=" \u204e WARP Session Renew ", command=session_renew)
+helpmenu.add_command(label=" \u204e WARP Session Delete", command=registration_delete)
+helpmenu.add_separator()
+helpmenu.add_command(label="\u2058 DNS Filter: family",   command=partial(set_dns_filter, "full"))
+helpmenu.add_command(label="\u2058 DNS Filter: malware",  command=partial(set_dns_filter, "malware"))
+helpmenu.add_separator()
+helpmenu.add_command(label=" \u2022 WARP Mode: doh",      command=partial(set_mode, "doh"))
+helpmenu.add_command(label=" \u2022 WARP Mode: warp",     command=partial(set_mode, "warp"))
+helpmenu.add_command(label=" \u2022 WARP Mode: warp+doh", command=partial(set_mode, "warp+doh"))
+helpmenu.add_command(label=" \u2022 WARP Mode: tunnel",   command=partial(set_mode, "tunnel_only"))
+helpmenu.add_command(label=" \u2022 WARP Mode: proxy",    command=partial(set_mode, "proxy"))
+helpmenu.add_separator()
+helpmenu.add_command(label="\u21C5 Service Taskbar Icon", command=service_taskbar)
+helpmenu.add_command(label="\u21C5 Refresh Information",  command=information_refresh)
+
+
+# Access information
+acc_label = Label(root, text = "", bg = bgcolor, font = ("Arial", 40, 'bold'))
+acc_label.pack(pady = 0)
+
+version = cf_info()
+if version.find("not found") > -1:
+    warp_version = "WARP not found"
+else:
+    warp_version = version
+warpver_label = Label(root, text = warp_version, fg = "DimGray",
+    bg = bgcolor, font = ("Arial", 12))
+warpver_label.pack(pady = (0,10))
+
+# IP information
+ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
+    font = ("Arial", 14), text = ipaddr_searching)
+ipaddr_label.pack(pady = (20,10))
+
+# Create A Button
+on_button = Button(root, image = off, bd = 0,
+    activebackground = bgcolor, bg = bgcolor)
+if get_status() == "UP":
+    on_button.config(image = on)
+else:
+    ipaddr_label.config(fg = "DimGray")
+
+threading.Thread(target=acc_info_update).start()
 
 ################################################################################
 
