@@ -492,7 +492,7 @@ root.config(bg = bgcolor)
 
 menubar = Menu(root, bg = bgcolor, activeborderwidth = 4)
 helpmenu = Menu(menubar, tearoff=1, relief=RAISED, font = "Arial 11")
-menubar.add_cascade(label="MENU",menu=helpmenu)
+menubar.add_cascade(label="\u25BD MENU", compound="left" ,menu=helpmenu)
 
 helpmenu.add_command(label="Registration Delete", command=registration_delete)
 helpmenu.add_command(label="WARP Session Renew ", command=session_renew)
