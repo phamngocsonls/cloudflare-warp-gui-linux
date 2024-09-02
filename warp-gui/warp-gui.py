@@ -67,7 +67,7 @@ registration_new_cmdline +=" && warp-cli dns families malware"
 registration_new_cmdline +=" && warp-cli set-mode warp+doh"
 
 ipaddr_errstring = "\n-= error or timeout =-"
-ipaddr_searching = "\n-=-.-=-.-=-.-=-"
+ipaddr_searching = "-=-.-=-.-=-.-=-"
 
 ################################################################################
 
@@ -297,7 +297,8 @@ def get_ipaddr(force=False):
 
     inrun_wait_or_set()
 
-    if force or get_ipaddr.text == "" or get_ipaddr.text == ipaddr_searching:
+    if force or get_ipaddr.text == "" \
+    or get_ipaddr.text.find(ipaddr_searching) > -1:
         get_ipaddr.tries = 0
     elif get_ipaddr.ipv4 or get_ipaddr.ipv6:
         return inrun_reset(get_ipaddr.text)
@@ -335,7 +336,7 @@ def get_ipaddr(force=False):
         get_ipaddr.ipv6 = ""
 
     if not ipv4 and not ipv6:
-        return inrun_reset(ipaddr_errstring)
+        return inrun_reset(ipaddr_searching + ipaddr_errstring)
 
     city = get_country_city(ipv4 if ipv4 else ipv6)
     get_ipaddr.city = city
@@ -345,7 +346,7 @@ def get_ipaddr(force=False):
             root.after(3, force_get_ipaddr)
 
     get_ipaddr.text = ipv4 + (" - " if ipv4 else "") + city \
-        + "\n" + (ipv6 if ipv6 else "-= ipv6 address unavailable =-")
+            + "\n" + (ipv6 if ipv6 else "-= ipv6 address unavailable =-")
 
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipstr):", get_ipaddr.tries,
@@ -514,7 +515,8 @@ update_guiview.inrun = 0
 
 
 def ipaddr_text_set(ipaddr_text=ipaddr_searching):
-    if ipaddr_text == ipaddr_searching:
+    if ipaddr_text.find(ipaddr_searching) > -1:
+        ipaddr_text = "\n"+ipaddr_searching
         ipaddr_label.config(fg = "DimGray")
     if get_status.last != "UP":
         ipaddr_label.config(fg = "DimGray")
@@ -671,7 +673,7 @@ warpver_label.pack(pady = (0,10))
 
 # IP information
 ipaddr_label = Label(root, fg = "MidNightBlue", bg = bgcolor,
-    font = ("Arial", 14), text = ipaddr_searching)
+    font = ("Arial", 14), text = "\n" + ipaddr_searching)
 ipaddr_label.pack(pady = (20,10))
 
 # Create A Button
