@@ -75,6 +75,7 @@ from socket import getaddrinfo, AF_INET, AF_INET6
 
 def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
     weburl = weburl.split('/',1)
+    url = ""
     if ipv6:
         # Resolve to an IPv6 address only (family=AF_INET6)
         ip_info = getaddrinfo(weburl[0], 80, family=AF_INET6)
@@ -88,14 +89,25 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
         # Construct the URL using the IPv4 address
         ip_address = ip_info[0][4][0]
         url = f"http://{ip_address}/"
-    url+= weburl[1]
+
+    if len(weburl) > 1:
+        url+= weburl[1]
 
     if get_ipaddr.dbg:
-        print("inet_get_ipaddr:", weburl[0], " + ", weburl[1], " = ", url)
+        print("inet_get_ipaddr:", weburl, url)
 
     # Send the GET request with the Host header set to the original domain
-    res = getUrl(url, headers={"Host": weburl[0]})
-    return res.text.split('\n',1)[0] #if res.status_code == 200 else ""
+    try:
+        res = getUrl(url, headers={"Host": weburl[0]})
+    except Exception as e:
+        raise(e)
+
+    if res.status_code != 200:
+        print("WRN> inet_get_ipaddr() return code:", res.status_code)
+
+    # RAF: return code 206 is partial content and should be discarded
+    return res.text.split('\n',1)[0] if res.status_code != 206 else ""
+
 
 def ipv4_get_ipaddr(url="ifconfig.me"):
     return inet_get_ipaddr(url, 0)
