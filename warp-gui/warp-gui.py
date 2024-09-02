@@ -281,30 +281,23 @@ def get_ipaddr(force=False):
 
     inrun_wait_or_set()
 
-    if get_ipaddr.dbg:
-        print("get_ipaddr(tries, force, ipv6):", get_ipaddr.tries, force,
-            get_ipaddr.text.find("::") > 0)
-
     if force or get_ipaddr.text == "" or get_ipaddr.text == ipaddr_searching:
         get_ipaddr.tries = 0
-    elif get_ipaddr.text == "\n" and get_ipaddr.tries < 2:
-        pass
-    elif get_ipaddr.tries < 2 \
-    and urllib3.util.connection.HAS_IPV6 \
-    and get_ipaddr.text.find("::") > 0:
-        return inrun_reset(get_ipaddr.text)
-    elif get_ipaddr.tries > 0:
+    elif get_ipaddr.ipv4 or get_ipaddr.ipv6:
         return inrun_reset(get_ipaddr.text)
 
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipaddr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
-    get_ipaddr.tries += 1
 
+    get_ipaddr.tries += 1
     url4 = choice(get_ipaddr.wurl4)
     url6 = choice(get_ipaddr.wurl6)
-    if get_ipaddr.dbg:
-        print("urls:", url4, url6)
+
+    if get_ipaddr.dbg and get_ipaddr.tries == 1:
+        print("ipv4 urls:", url4)
+        print("ipv6 urls:", url6)
+
     ipv4 = ipv6 = ""
     try:
         ipv4 = ipv4_get_ipaddr(url4)
@@ -321,18 +314,19 @@ def get_ipaddr(force=False):
             print("ERR>  get ipv6(try, exception):", get_ipaddr.tries, str(e))
         get_ipaddr.ipv6 = ""
 
-    if ipv4 + ipv6 == "":
-        if get_ipaddr.tries > 1:
-            root.after(3, force_get_ipaddr)
+    if not ipv4 and not ipv6:
         return inrun_reset(ipaddr_errstring)
 
-    country_city = get_country_city(get_ipaddr.ipv4)
-    if country_city == "" and get_ipaddr.tries > 1:
-        root.after(3, force_get_ipaddr)
+    city = get_country_city(ipv4 if ipv4 else ipv6)
+    get_ipaddr.city = city
 
-    #get_ipaddr.text = country_city + "\n" + ipv4 + "\n" + ipv6
-    get_ipaddr.text = ipv4 + " - " + country_city + "\n" \
-        + (ipv6 if ipv6 else "-= ipv6 address unavailable =-")
+    if not ipv4 or not ipv6 or not city:
+        if get_ipaddr.tries > 1:
+            root.after(3, force_get_ipaddr)
+
+    get_ipaddr.text = ipv4 + (" - " if ipv4 else "") + city \
+        + "\n" + (ipv6 if ipv6 else "-= ipv6 address unavailable =-")
+
     if get_ipaddr.dbg:
         print("get_ipaddr(try, ipstr):", get_ipaddr.tries,
             get_ipaddr.text.replace("\n", " "))
@@ -348,6 +342,7 @@ get_ipaddr.inrun = 0
 get_ipaddr.text = ""
 get_ipaddr.ipv4 = ""
 get_ipaddr.ipv6 = ""
+get_ipaddr.city = ""
 get_ipaddr.tries = 0
 get_ipaddr.dbg = 0
 
