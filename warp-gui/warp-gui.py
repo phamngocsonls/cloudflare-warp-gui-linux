@@ -53,19 +53,13 @@
 
 # Import pip3 Module
 from tkinter import *
-import subprocess
-import time
-from requests import get
-from requests import urllib3
-import tkinter.font as tkFont
-import os
-import threading
-import ipinfo
-from tkinter import simpledialog
-from functools import partial
-from random import choice
+from time import sleep
+from os import getpid, path
+from subprocess import getoutput
+from requests import get as getUrl, urllib3
+from threading import Thread, Event
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
+dir_path = path.dirname(path.realpath(__file__))
 
 registration_new_cmdline = "warp-cli --accept-tos registration new"
 registration_new_cmdline +=" && warp-cli dns families malware"
@@ -76,21 +70,20 @@ ipaddr_searching = "\n-=-.-=-.-=-.-=-"
 
 ################################################################################
 
-import requests
-import socket
+from socket import getaddrinfo, AF_INET, AF_INET6
 
 def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
     weburl = weburl.split('/',1)
     if ipv6:
-        # Resolve to an IPv6 address only (family=socket.AF_INET6)
-        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET6)
+        # Resolve to an IPv6 address only (family=AF_INET6)
+        ip_info = getaddrinfo(weburl[0], 80, family=AF_INET6)
         # Construct the URL using the IPv6 address
         # IPv6 addresses should be enclosed in []
         ip_address = ip_info[0][4][0]
         url = f"http://[{ip_address}]/"
     else:
-        # Resolve to an IPv4 address only (family=socket.AF_INET)
-        ip_info = socket.getaddrinfo(weburl[0], 80, family=socket.AF_INET)
+        # Resolve to an IPv4 address only (family=AF_INET)
+        ip_info = getaddrinfo(weburl[0], 80, family=AF_INET)
         # Construct the URL using the IPv4 address
         ip_address = ip_info[0][4][0]
         url = f"http://{ip_address}/"
@@ -100,7 +93,7 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
         print("inet_get_ipaddr:", weburl[0], " + ", weburl[1], " = ", url)
 
     # Send the GET request with the Host header set to the original domain
-    res = requests.get(url, headers={"Host": weburl[0]})
+    res = getUrl(url, headers={"Host": weburl[0]})
     return res.text.split('\n',1)[0] #if res.status_code == 200 else ""
 
 def ipv4_get_ipaddr(url="ifconfig.me"):
@@ -111,11 +104,11 @@ def ipv6_get_ipaddr(url="ifconfig.me"):
 
 ################################################################################
 
-import sys
+from sys import _getframe
 # for current func name, specify 0 or no argument.
 # for name of caller of current func, specify 1.
 # for name of caller of caller of current func, specify 2. etc.
-func_name = lambda n=0: sys._getframe(n+1).f_code.co_name
+func_name = lambda n=0: _getframe(n+1).f_code.co_name
 
 # RAF, TODO
 #
@@ -128,10 +121,10 @@ func_name = lambda n=0: sys._getframe(n+1).f_code.co_name
 def inrun_wait_or_set(wait=0):
     func = eval(func_name(1))
     if wait > 0:
-        time.sleep(wait)
+        sleep(wait)
     else:
         while func.inrun:
-            time.sleep(0.10)
+            sleep(0.10)
     func.inrun = 1
 
 
@@ -144,7 +137,7 @@ def inrun_reset(val=None):
 def get_status(wait=0):
     inrun_wait_or_set(wait)
 
-    status = subprocess.getoutput("warp-cli status")
+    status = getoutput("warp-cli status")
     if status.find("Success") == 0:
         return get_status(0.5)
     status = status.split("\n")[0]
@@ -198,7 +191,7 @@ def update_guiview_by_menu(err_str, info_str=""):
 
 def registration_delete():
     root.tr.pause()
-    err_str = subprocess.getoutput("warp-cli registration delete")
+    err_str = getoutput("warp-cli registration delete")
     ipaddr_text_set()
     get_status.last = "RGM"
     update_guiview_by_menu(err_str, "registration delete")
@@ -230,7 +223,7 @@ def session_renew():
         cmdline += " && warp-cli connect"
 
     ipaddr_text_set()
-    err_str = subprocess.getoutput("warp-cli registration delete; " + cmdline)
+    err_str = getoutput("warp-cli registration delete; " + cmdline)
     if oldval == "UP":
         get_status.last = "CN"
     else:
@@ -243,7 +236,7 @@ def session_renew():
 def get_access():
     inrun_wait_or_set()
 
-    account = subprocess.getoutput("warp-cli registration show")
+    account = getoutput("warp-cli registration show")
     get_access.last = (account.find("Team") > -1)
 
     return inrun_reset(get_access.last)
@@ -288,12 +281,15 @@ def status_icon_update(status=get_status.last, zerotrust=get_access.last):
 
 
 def cf_info():
-    return subprocess.getoutput("warp-cli --version")
+    return getoutput("warp-cli --version")
 
 
 def force_get_ipaddr():
     get_ipaddr(True)
 
+
+from random import choice
+from ipinfo import getHandler
 
 def get_ipaddr(force=False):
     global ipaddr_searching, ipaddr_errstring
@@ -357,7 +353,7 @@ def get_ipaddr(force=False):
     return inrun_reset(get_ipaddr.text)
 
 get_ipaddr.hadler_token = ""
-get_ipaddr.handler = ipinfo.getHandler(get_ipaddr.hadler_token)
+get_ipaddr.handler = getHandler(get_ipaddr.hadler_token)
 get_ipaddr.wurls = ['ifconfig.me/ip', 'icanhazip.com', 'myip.wtf/text', 'eth0.me']
 get_ipaddr.wurl6 = ['api6.ipify.org/','ip6only.me/ip/'] + get_ipaddr.wurls
 get_ipaddr.wurl4 = ['api.ipify.org/', 'ip4.me/ip/'] + get_ipaddr.wurls
@@ -413,21 +409,23 @@ get_country_city.dict = dict()
 get_country_city.dict_reset = reset_country_city_dict.delay
 
 
+from tkinter import simpledialog
+
 def enroll():
     global registration_new_cmdline
 
-    subprocess.getoutput("warp-cli disconnect")
+    getoutput("warp-cli disconnect")
     try:
         if get_access.last == True or get_status.reg == False:
             cmdline = registration_new_cmdline
-            subprocess.getoutput(cmdline)
+            getoutput(cmdline)
             slogan.config(image = cflogo)
         else:
             organization = simpledialog.askstring(title="Organization",
                                       prompt="What's your Organization?:")
             if organization != "":
                 new_command = "yes yes | warp-cli --accept-tos teams-enroll "
-                subprocess.getoutput(new_command + organization)
+                getoutput(new_command + organization)
                 slogan.config(image = tmlogo)
     except:
         pass
@@ -435,26 +433,26 @@ def enroll():
 
 
 def set_dns_filter(filter):
-    subprocess.getoutput("warp-cli dns families " + filter)
+    getoutput("warp-cli dns families " + filter)
     get_settings.warp_settings = ""
 
 
 def set_mode(mode):
-    subprocess.getoutput("warp-cli mode " + mode)
+    getoutput("warp-cli mode " + mode)
     get_settings.warp_settings = ""
     ipaddr_text_set()
 
 
 def service_taskbar():
     cmdline = 'systemctl --user status warp-taskbar | sed -ne "s/Active: //p"'
-    retstr = subprocess.getoutput(cmdline)
+    retstr = getoutput(cmdline)
     if retstr.find("inactive") > -1:
         cmdline = 'systemctl --user enable warp-taskbar;'
         cmdline+=' systemctl --user start warp-taskbar'
     else:
         cmdline = 'systemctl --user disable warp-taskbar;'
         cmdline+=' systemctl --user stop warp-taskbar'
-    retstr = subprocess.getoutput(cmdline)
+    retstr = getoutput(cmdline)
 
 
 def wait_status():
@@ -464,7 +462,7 @@ def wait_status():
         status = get_status()
         if status != "CN" and status != "DC":
             return status
-        time.sleep(0.10)
+        sleep(0.10)
 
     return status
 
@@ -502,11 +500,11 @@ def update_guiview(status, errlog=1):
     stats_label.update_idletasks()
 
     if status != "CN" and status != "DC":
-        threading.Thread(target=acc_info_update).start()
-        threading.Thread(target=change_ip_text).start()
-        threading.Thread(target=get_settings).start()
+        Thread(target=acc_info_update).start()
+        Thread(target=change_ip_text).start()
+        Thread(target=get_settings).start()
         slide_update(status)
-        time.sleep(0.10)
+        sleep(0.10)
 
     root.tr.resume()
     update_guiview.inrun = 0
@@ -538,12 +536,12 @@ def slide_switch():
         get_status.last = "DC"
         status_label.config(text = "Disconnecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
-        retstr = subprocess.getoutput("warp-cli disconnect")
+        retstr = getoutput("warp-cli disconnect")
     elif get_status.last == "DN":
         get_status.last = "CN"
         status_label.config(text = "Connecting...", fg = "Dimgray",
             font = ("Arial", 15, 'italic') )
-        retstr = subprocess.getoutput("warp-cli --accept-tos connect")
+        retstr = getoutput("warp-cli --accept-tos connect")
     status_label.update_idletasks()
 
     ipaddr_text_set()
@@ -555,6 +553,8 @@ def slide_switch():
 slide_switch.inrun = 0
 
 # create root windows ##########################################################
+
+from functools import partial
 
 bgcolor = "GainsBoro"
 root = Tk()
@@ -664,7 +664,7 @@ if get_status() == "UP":
 else:
     ipaddr_label.config(fg = "DimGray")
 
-threading.Thread(target=acc_info_update).start()
+Thread(target=acc_info_update).start()
 
 ################################################################################
 
@@ -714,7 +714,7 @@ def stats_label_update():
         return
     stats_label_update.inrun = 1
 
-    warp_stats = subprocess.getoutput("warp-cli tunnel stats")
+    warp_stats = getoutput("warp-cli tunnel stats")
     if warp_stats == "":
         pass
     elif warp_stats != stats_label_update.warp_stats_last:
@@ -736,8 +736,8 @@ class TestThreading(object):
     def __init__(self, interval=1.0):
         self.skip = 0
         self.interval = interval
-        self._event = threading.Event()
-        thread = threading.Thread(target=self.run, args=(acc_label,))
+        self._event = Event()
+        thread = Thread(target=self.run, args=(acc_label,))
         thread.daemon = True
         thread.start()
 
@@ -752,7 +752,7 @@ class TestThreading(object):
     def run(self, acc_label):
         while True:
             if self.skip:
-                time.sleep(0.10)
+                sleep(0.10)
                 continue
 
             status = get_status()
@@ -769,7 +769,7 @@ class TestThreading(object):
                 stats_label.config(fg = "DimGray")
                 status_icon_update(status, get_access())
 
-            time.sleep(self.interval)
+            sleep(self.interval)
 
 ################################################################################
 
@@ -805,7 +805,7 @@ dnsf_label = [           'family', 'security', 'cloudflare-dns' ]
 def get_settings():
     global dnsf_types, dnsf_label, warp_label, warp_modes
 
-    retstr = subprocess.getoutput(get_settings.warp_cmdline)
+    retstr = getoutput(get_settings.warp_cmdline)
     if get_settings.warp_settings == retstr:
         return
 
@@ -839,7 +839,7 @@ get_settings.warp_cmdline = 'warp-cli settings | grep --color=never -e "^("'
 def settings_report():
     settings_report_cmdline = get_settings.warp_cmdline
     settings_report_cmdline +=' | sed -e "s/.*\\t//" -e "s/@/\\n\\t/"'
-    report_str = subprocess.getoutput(settings_report_cmdline)
+    report_str = getoutput(settings_report_cmdline)
     print("\n\t-= SETTINGS REPORT =-\n\n" + report_str + "\n")
 
 
