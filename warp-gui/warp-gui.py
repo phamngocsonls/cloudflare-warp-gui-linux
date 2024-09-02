@@ -208,6 +208,7 @@ def information_refresh():
     root.tr.pause()
     ipaddr_text_set()
     get_status.last = ""
+    reset_country_city_dict()
     update_guiview_by_menu("information refresh")
 
 
