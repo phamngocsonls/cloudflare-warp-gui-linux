@@ -286,6 +286,7 @@ def cf_info():
 
 
 def force_get_ipaddr():
+    ipaddr_text_set()
     get_ipaddr(True)
 
 

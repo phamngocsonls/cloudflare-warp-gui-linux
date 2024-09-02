@@ -8,3 +8,4 @@ v adding the IPv6 exiting ip address with socket lookup
 + add GUI information dialog
 + close cascading menu when focus is lost
 + choose should be replaced by round+1 trip
++ verificare il return code per il retry
