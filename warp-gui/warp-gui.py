@@ -371,14 +371,7 @@ get_ipaddr.dbg = 0
 
 def reset_country_city_dict():
     get_country_city.dict = dict()
-    get_country_city.dict_reset = reset_country_city_dict.delay
-#
-# geolocalization caching delay value:
-#   -N = perment cache (no reset)
-#    0 = no any cache (disabled)
-#   +N = last in seconds (temporary)
-#
-reset_country_city_dict.delay = 600
+    get_country_city.reset = get_country_city.delay
 
 
 def get_country_city(ipaddr):
@@ -387,7 +380,7 @@ def get_country_city(ipaddr):
     if ipaddr == "":
         return ""
 
-    if reset_country_city_dict.delay:
+    if get_country_city.delay:
         try:
             city = get_country_city.dict[ipaddr]
             return city
@@ -401,15 +394,22 @@ def get_country_city(ipaddr):
         return ipaddr_errstring
 
     strn = details.city + " (" + details.country + ")"
-    if get_country_city.dict_reset > 0:
-        root.after(get_country_city.dict_reset, reset_country_city_dict)
-        get_country_city.dict_reset = 0
+    if get_country_city.reset > 0:
+        root.after(get_country_city.delay, reset_country_city_dict)
+        get_country_city.reset = 0
     get_country_city.dict[ipaddr] = strn
 
     return strn
 
 get_country_city.dict = dict()
-get_country_city.dict_reset = reset_country_city_dict.delay
+#
+# geolocalization caching delay value:
+#   -N = perment cache (no reset)
+#    0 = no any cache (disabled)
+#    N = cache reset (delayed)
+#
+get_country_city.delay = 600 # value in seconds
+get_country_city.reset = get_country_city.delay
 
 
 from tkinter import simpledialog
