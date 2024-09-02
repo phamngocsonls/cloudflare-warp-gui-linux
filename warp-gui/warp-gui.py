@@ -92,7 +92,7 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
 
     # Send the GET request with the Host header set to the original domain
     res = requests.get(url, headers={"Host": weburl[0]}, timeout=(1.5,2.0))
-    return res.text.split('\n',1)[0] if res.status_code == 200 else ""
+    return res.text.split('\n',1)[0] #if res.status_code == 200 else ""
 
 def ipv4_get_ipaddr(url="ifconfig.me"):
     return inet_get_ipaddr(url, 0)
