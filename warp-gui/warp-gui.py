@@ -754,10 +754,11 @@ class TestThreading(object):
             if self.skip:
                 time.sleep(0.10)
                 continue
+
             status = get_status()
             try:
                 top = root.attributes('-topmost')
-                top |= (root.focus_get() != None)
+                top|= (root.focus_get() != None)
             except:
                 top = 1
             if top == 1:
@@ -767,6 +768,7 @@ class TestThreading(object):
             else:
                 stats_label.config(fg = "DimGray")
                 status_icon_update(status, get_access())
+
             time.sleep(self.interval)
 
 ################################################################################
