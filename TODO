@@ -1,11 +1,16 @@
-TODOs IN WHISH LIST
+TODO
 
 + light or dark theme or system theme among these two
-v adding the IPv6 exiting ip address with socket lookup
 + catch the CTRL+C and terminate correctly
 + disable the IP refresh button during the operation
-+ put the runnin PID under the GUI version
-+ add GUI information dialog
-+ close cascading menu when focus is lost
++ add GUI information dialog for authorship notice
++ add GUI information dialog for errors log view
 + choose should be replaced by round+1 trip
-+ verificare il return code per il retry
++ close cascading menu when focus is lost
++ instead of dicationary use lru_cache
+
+DONE
+
+v adding the IPv6 exiting ip address with socket lookup
+v put the running PID under the GUI version
+v check the return code for the http queries
