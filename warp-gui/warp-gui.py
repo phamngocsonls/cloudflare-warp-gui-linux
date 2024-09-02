@@ -100,7 +100,7 @@ def inet_get_ipaddr(weburl="ifconfig.me", ipv6=False):
         print("inet_get_ipaddr:", weburl[0], " + ", weburl[1], " = ", url)
 
     # Send the GET request with the Host header set to the original domain
-    res = requests.get(url, headers={"Host": weburl[0]}, timeout=(1.5,2.0))
+    res = requests.get(url, headers={"Host": weburl[0]})
     return res.text.split('\n',1)[0] #if res.status_code == 200 else ""
 
 def ipv4_get_ipaddr(url="ifconfig.me"):
@@ -397,7 +397,7 @@ def get_country_city(ipaddr):
 
     try:
         # using the access_token from ipinfo
-        details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.5,1.0))
+        details = get_ipaddr.handler.getDetails(ipaddr)
     except:
         return ipaddr_errstring
 
