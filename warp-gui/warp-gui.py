@@ -390,21 +390,24 @@ def get_country_city(ipaddr):
 
     if reset_country_city_dict.delay:
         try:
-            return get_country_city.dict[ipaddr]
+            city = get_country_city.dict[ipaddr]
+            return city
         except:
             pass
 
     try:
         # using the access_token from ipinfo
         details = get_ipaddr.handler.getDetails(ipaddr, timeout=(0.5,1.0))
-        strn = details.city + " (" + details.country + ")"
-        get_country_city.dict[ipaddr] = strn
-        if get_country_city.dict_reset > 0:
-            root.after(get_country_city.dict_reset, reset_country_city_dict)
-            get_country_city.dict_reset = 0
-        return strn
     except:
         return ipaddr_errstring
+
+    strn = details.city + " (" + details.country + ")"
+    if get_country_city.dict_reset > 0:
+        root.after(get_country_city.dict_reset, reset_country_city_dict)
+        get_country_city.dict_reset = 0
+    get_country_city.dict[ipaddr] = strn
+
+    return strn
 
 get_country_city.dict = dict()
 get_country_city.dict_reset = reset_country_city_dict.delay
